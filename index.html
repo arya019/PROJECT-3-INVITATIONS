@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>বিয়েয়ের আমন্ত্রণ — Wedding Invitation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700;900&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="themes.css">
+  <link rel="preload" as="audio" type="audio/mpeg" href="images/shehnai.mp3">
+</head>
+<body data-theme="home">
+
+  <!-- ── floating hearts & petals (filled by script.js) ── -->
+  <div class="floating-deco" aria-hidden="true"></div>
+
+  <!-- ── music toggle (top-right) ── -->
+  <button class="music-toggle js-music" aria-label="মিউজিক">♪</button>
+
+  <!-- ══════════════════ OPENING ENVELOPE ══════════════════ -->
+  <div class="envelope-overlay">
+    <div class="envelope" id="envelope">
+      <div class="env-letter">
+        <span class="heart">❤</span>
+        <p>শুভ উদযাপনে স্বাগতম</p>
+      </div>
+      <div class="env-flap"></div>
+      <div class="env-back env-pocket"></div>
+      <div class="env-hint">খুলতে চাপ দিন ✉</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ HERO ══════════════════ -->
+  <header class="hero home-hero">
+    <div class="hero-kicker">Shubho · Wedding</div>
+    <h1 class="hero-names">
+      <span class="js-groom-h">বর</span>
+      <span class="heartbeat">❤</span>
+      <span class="js-bride-h">কনে</span>
+    </h1>
+    <div class="hero-line js-greeting">আমাদের বিবাহের শুভ মুহূর্তে আপনাকে সাদর আমন্ত্রণ</div>
+    <div class="en" style="margin-top:.7rem">Wedding Invitation</div>
+    <a class="btn hero-cta" href="#events" data-nav>অনুষ্ঠানসমূহ দেখুন</a>
+  </header>
+
+  <!-- ══════════════════ THE 4 EVENT CARDS ══════════════════ -->
+  <main>
+    <section class="section" id="events">
+      <h2>চারটি শুভ অনুষ্ঠান</h2>
+      <p class="sub-note">প্রতিটি অনুষ্ঠানের নিজস্ব অনন্য পরিবেশ — কার্ডে চাপ দিয়ে বিস্তারিত দেখুন।</p>
+      <div class="event-grid">
+
+        <a data-card="aiburoBhat" data-nav class="event-card ec-warm">
+          <span class="ec-emoji">🍚</span>
+          <span class="ec-bn">আইবুড়ো ভাত</span>
+          <span class="ec-en">Aiburo Bhat</span>
+          <span class="ec-date">—</span>
+          <span class="ec-go">খুলুন →</span>
+        </a>
+
+        <a data-card="gayeHolud" data-nav class="event-card ec-mari">
+          <span class="ec-emoji">🌼</span>
+          <span class="ec-bn">গায়ে হলুদ</span>
+          <span class="ec-en">Gaye Holud</span>
+          <span class="ec-date">—</span>
+          <span class="ec-go">খুলুন →</span>
+        </a>
+
+        <a data-card="biye" data-nav class="event-card ec-royal">
+          <span class="ec-emoji">🪔</span>
+          <span class="ec-bn">বিবাহ</span>
+          <span class="ec-en">Wedding</span>
+          <span class="ec-date">—</span>
+          <span class="ec-go">খুলুন →</span>
+        </a>
+
+        <a data-card="bojhat" data-nav class="event-card ec-emera">
+          <span class="ec-emoji">💍</span>
+          <span class="ec-bn">বৌভাত</span>
+          <span class="ec-en">Reception</span>
+          <span class="ec-date">—</span>
+          <span class="ec-go">খুলুন →</span>
+        </a>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">সস্নেহে আমন্ত্রণ · <span class="js-f-groom">বর</span> <span class="heart">♥</span> <span class="js-f-bride">কনে</span></footer>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
