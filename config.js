@@ -145,6 +145,52 @@ const WEDDING = {
         "https://picsum.photos/seed/bojhat4/800/600"
       ]
     }
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     CARD THEMES — colours for the 4 landing event cards.
+     Change these to restyle every card in one place.
+     Keys match the event keys above (aiburoBhat / gayeHolud / biye / bojhat).
+     ═══════════════════════════════════════════════════════════════ */
+  cardThemes: {
+    aiburoBhat: {
+      bg:       "#fdf1d6",   // soft warm cream
+      title:    "#6b1f1f",   // deep maroon
+      subtitle: "#a05a2c",   // warm brown
+      accent:   "#c9a227",   // gold
+      // per-theme glow (text-shadow for title, subtitle; drop-shadow for icon)
+      titleGlow:    "0 0 12px rgba(201,162,39,0.55), 0 0 24px rgba(201,162,39,0.25)",
+      subtitleGlow: "0 0 8px rgba(160,90,44,0.40)",
+      iconGlow:     "drop-shadow(0 0 10px rgba(201,162,39,0.5))"
+    },
+    gayeHolud: {
+      bg:       "#f4a300",   // bright marigold
+      title:    "#7a1f0f",   // deep maroon
+      subtitle: "#b34700",   // darker orange
+      accent:   "#c9a227",
+      titleGlow:    "0 0 14px rgba(122,31,15,0.45), 0 0 28px rgba(255,200,60,0.6)",
+      subtitleGlow: "0 0 8px rgba(179,71,0,0.4)",
+      iconGlow:     "drop-shadow(0 0 12px rgba(255,200,60,0.7))"
+    },
+    biye: {
+      bg:       "#8b1a1a",   // royal wedding red
+      title:    "#f4d47c",   // warm gold
+      subtitle: "#fde8c8",   // soft cream
+      accent:   "#c9a227",
+      titleGlow:    "0 0 14px rgba(244,212,124,0.9), 0 0 28px rgba(244,212,124,0.5), 0 0 45px rgba(244,212,124,0.25)",
+      subtitleGlow: "0 0 10px rgba(253,232,200,0.7)",
+      iconGlow:     "drop-shadow(0 0 14px rgba(244,212,124,0.8))"
+    },
+    bojhat: {
+      bg:       "#0f5132",   // deep emerald green
+      title:    "#f4d47c",   // warm gold
+      subtitle: "#e8d9a8",   // pale gold
+      accent:   "#c9a227",
+      // reference look — keep as-is
+      titleGlow:    "0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5)",
+      subtitleGlow: "0 0 8px rgba(232,217,168,0.7)",
+      iconGlow:     "drop-shadow(0 0 12px rgba(244,212,124,0.8))"
+    }
   }
 };
 

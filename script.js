@@ -366,6 +366,8 @@ function initHomeCards() {
   text($(".js-f-groom"), W.groom);
   text($(".js-f-bride"), W.bride);
 
+  const themes = W.cardThemes || {};
+
   $$(".event-card").forEach(card => {
     const key = card.dataset.card;
     if (!key) return;
@@ -374,9 +376,26 @@ function initHomeCards() {
     text($(".ec-bn", card), ev.titleBn);
     text($(".ec-en", card), ev.titleEn);
     text($(".ec-date", card), ev.dateBn);
+    text($(".ec-date-en", card), ev.dateEn);
     // nav to the matching view: config "page" = "aiburo-bhat.html" → "#aiburo-bhat"
     const pageId = String(ev.page || (key + ".html")).replace(/\.html$/, "");
     card.href = "#" + pageId;
+
+    // apply card theme colours + glow from config.js → cardThemes
+    const t = themes[key];
+    if (t) {
+      card.style.setProperty("--ev-bg",       t.bg);
+      card.style.setProperty("--ev-title",    t.title);
+      card.style.setProperty("--ev-subtitle", t.subtitle);
+      card.style.setProperty("--ev-accent",   t.accent);
+      card.style.setProperty("--ev-title-glow",    t.titleGlow    || "none");
+      card.style.setProperty("--ev-subtitle-glow", t.subtitleGlow || "none");
+      card.style.setProperty("--ev-icon-glow",     t.iconGlow     || "none");
+      // belt-and-suspenders: also set the background directly so the
+      // card colour can never be lost to a custom-property cascade quirk
+      card.style.background = t.bg;
+      card.style.color = t.title;
+    }
   });
 }
 

@@ -193,6 +193,39 @@ body[data-theme="royal-red"]::before {
 .theme-icon .emoji { width: auto; height: auto; }
 
 /* ============================================================
+   EVENT-PAGE HERO GLOW — per-theme, driven by themes.css vars
+   (--title-glow / --subtitle-glow / --names-glow / --icon-glow)
+   ============================================================ */
+.view[data-event] .ev-title {
+  text-shadow: var(--title-glow);
+  animation: titleGlow 3s ease-in-out infinite;
+}
+.view[data-event] .hero .en {
+  text-shadow: var(--subtitle-glow);
+}
+/* couple names "বর ❤ কনে" — pulsing glow matched to the theme */
+.view[data-event] .hero-names {
+  text-shadow: var(--names-glow);
+  animation: namesGlow 3s ease-in-out infinite;
+}
+.view[data-event] .theme-icon {
+  filter: var(--icon-glow);
+}
+/* gentle breathing of the title & names glow (rest → bright) */
+@keyframes titleGlow {
+  0%, 100% { text-shadow: var(--title-glow); }
+  50%      { text-shadow: var(--title-glow-bright); }
+}
+@keyframes namesGlow {
+  0%, 100% { text-shadow: var(--names-glow); }
+  50%      { text-shadow: var(--names-glow-bright); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .view[data-event] .ev-title,
+  .view[data-event] .hero-names { animation: none; }
+}
+
+/* ============================================================
    SECTIONS (generic)
    ============================================================ */
 .section {
@@ -358,37 +391,152 @@ body[data-theme="royal-red"]::before {
    ============================================================ */
 .home-hero { min-height: 78vh; justify-content: center; }
 
-/* the 4 event link cards */
+/* ── EVENT CARDS — matching set, only colours differ ────────── */
+/* Colours are driven by config.js → cardThemes, applied as
+   inline custom properties by script.js.  Swap colours there. */
 .event-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.3rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
   margin-top: 1rem;
+  align-items: stretch;
 }
 .event-card {
+  --ev-bg:       #fdf1d6;
+  --ev-title:    #6b1f1f;
+  --ev-subtitle: #a05a2c;
+  --ev-accent:   #c9a227;
+  --ev-title-glow:    none;   /* per-theme text-shadow for the title */
+  --ev-subtitle-glow: none;   /* per-theme text-shadow for the subtitle */
+  --ev-icon-glow:     none;   /* per-theme drop-shadow for the icon */
   position: relative;
-  border-radius: 18px;
-  padding: 2rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 340px;
+  padding: 24px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--ev-accent);
+  background: var(--ev-bg);
+  color: var(--ev-title);
   text-align: center;
-  color: var(--ev-ink, var(--ink));
-  background: var(--ev-bg, var(--card-bg));
-  border: 2px solid var(--ev-border, var(--border));
-  box-shadow: 0 14px 34px var(--glow);
-  transition: transform .3s ease, box-shadow .3s ease;
-  display: block;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(0,0,0,.10);
   overflow: hidden;
+  transition: transform .3s ease, box-shadow .3s ease;
 }
-.event-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px var(--glow); }
-.event-card .ec-emoji { font-size: 2.6rem; display: block; margin-bottom: .6rem; }
-.event-card .ec-bn { font-family: var(--head-font); font-size: 1.35rem; font-weight: 700; }
-.event-card .ec-en { font-family: var(--font-en); font-size: .78rem; letter-spacing: .22em; color: var(--ev-ink-soft); opacity:.8; margin-top: .2rem; }
-.event-card .ec-date { font-size: .9rem; margin-top: .7rem; opacity: .9; }
-.event-card .ec-go { margin-top: 1rem; font-size: .85rem; font-weight: 600; }
-/* each card is tinted by its own theme inline (set in index.html) */
-.ec-warm   { --ev-bg:#fff8e7; --ev-border:#d9b36a; --ev-ink:#6d1f1f; --ev-ink-soft:#8a3a2b; }
-.ec-mari   { --ev-bg:#fff2bf; --ev-border:#f0a41b; --ev-ink:#a32020; --ev-ink-soft:#c0392b; }
-.ec-royal  { --ev-bg:#fffdf6; --ev-border:#b8985f; --ev-ink:#5d0f0f; --ev-ink-soft:#8a1c1c; }
-.ec-emera  { --ev-bg:#0f4a38; --ev-border:#e6c25a; --ev-ink:#f2d57e; --ev-ink-soft:#d9b45c; }
+/* subtle gold-dot pattern overlay — gives all 4 cards a matching texture */
+.event-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: radial-gradient(circle, var(--ev-accent) 1px, transparent 1px);
+  background-size: 12px 12px;
+  opacity: 0.06;
+  pointer-events: none;
+}
+.event-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.18);
+}
+
+/* ── guaranteed theme fallbacks (script.js overrides these from
+   config.js → cardThemes, which is the single source of truth) ── */
+.ec-aiburo {
+  --ev-bg:#fdf1d6; --ev-title:#6b1f1f; --ev-subtitle:#a05a2c; --ev-accent:#c9a227;
+  --ev-title-glow: 0 0 12px rgba(201,162,39,0.55), 0 0 24px rgba(201,162,39,0.25);
+  --ev-subtitle-glow: 0 0 8px rgba(160,90,44,0.40);
+  --ev-icon-glow: drop-shadow(0 0 10px rgba(201,162,39,0.5));
+}
+.ec-holud {
+  --ev-bg:#f4a300; --ev-title:#7a1f0f; --ev-subtitle:#b34700; --ev-accent:#c9a227;
+  --ev-title-glow: 0 0 14px rgba(122,31,15,0.45), 0 0 28px rgba(255,200,60,0.6);
+  --ev-subtitle-glow: 0 0 8px rgba(179,71,0,0.4);
+  --ev-icon-glow: drop-shadow(0 0 12px rgba(255,200,60,0.7));
+}
+.ec-biye {
+  --ev-bg:#8b1a1a; --ev-title:#f4d47c; --ev-subtitle:#fde8c8; --ev-accent:#c9a227;
+  --ev-title-glow: 0 0 14px rgba(244,212,124,0.9), 0 0 28px rgba(244,212,124,0.5), 0 0 45px rgba(244,212,124,0.25);
+  --ev-subtitle-glow: 0 0 10px rgba(253,232,200,0.7);
+  --ev-icon-glow: drop-shadow(0 0 14px rgba(244,212,124,0.8));
+}
+.ec-bojhat {
+  --ev-bg:#0f5132; --ev-title:#f4d47c; --ev-subtitle:#e8d9a8; --ev-accent:#c9a227;
+  --ev-title-glow: 0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5);
+  --ev-subtitle-glow: 0 0 8px rgba(232,217,168,0.7);
+  --ev-icon-glow: drop-shadow(0 0 12px rgba(244,212,124,0.8));
+}
+
+/* — internal structure (identical on every card) — */
+.ec-icon {
+  display: block;
+  height: 60px;
+  line-height: 60px;
+  font-size: 44px;
+  margin-bottom: 12px;
+  filter: var(--ev-icon-glow);
+  animation: iconPulse 3s ease-in-out infinite;
+}
+.ec-bn {
+  font-family: var(--head-font);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ev-title);
+  text-shadow: var(--ev-title-glow);
+  margin-bottom: 4px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+.ec-en {
+  font-family: var(--font-en);
+  font-size: 0.9rem;
+  font-style: italic;
+  letter-spacing: 0.12em;
+  color: var(--ev-subtitle);
+  text-shadow: var(--ev-subtitle-glow);
+  opacity: 0.85;
+  margin-bottom: 10px;
+}
+/* gentle breathing on the icon glow — matches each theme's gold accent */
+@keyframes iconPulse {
+  0%, 100% { filter: var(--ev-icon-glow); }
+  50%      { filter: drop-shadow(0 0 16px var(--ev-accent)); }
+}
+/* respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ec-icon { animation: none; }
+}
+.ec-divider {
+  display: block;
+  width: 50px;
+  height: 1px;
+  margin: 10px auto;
+  background: var(--ev-accent);
+  opacity: 0.6;
+}
+.ec-date {
+  font-size: 1rem;
+  line-height: 1.5;
+  min-height: 50px;
+  color: var(--ev-title);
+  opacity: 0.92;
+}
+.ec-date-en {
+  display: block;
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.75;
+  margin-top: 2px;
+  color: var(--ev-subtitle);
+  line-height: 1.5;
+}
+.ec-go {
+  margin-top: auto;
+  padding-top: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ev-accent);
+}
 
 /* ============================================================
    ENVELOPE OPENING (index.html — cute Bengali traditional)
@@ -924,17 +1072,21 @@ body[data-theme="royal-red"]::before {
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+@media (max-width: 1024px) {
+  .event-grid { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 640px) {
   .section { padding: 3rem 1rem; }
   .btn-back { font-size: .85rem; padding: .5rem .8rem; }
   .cd-box { min-width: 68px; }
   .gallery img { height: 200px; }
-  .event-grid { grid-template-columns: 1fr 1fr; }
-  .event-card { padding: 1.4rem .8rem; }
+  .event-grid { grid-template-columns: 1fr; gap: 16px; }
+  .event-card { min-height: auto; padding: 20px 16px; }
+  .event-card .ec-bn { font-size: 1.2rem; }
+  .event-card .ec-en { font-size: .82rem; }
+  /* save battery on mobile: stop the pulse animation, keep the static glow */
+  .ec-icon { animation: none; }
   .hero-names { gap: .5rem; }
-}
-@media (max-width: 380px) {
-  .event-grid { grid-template-columns: 1fr; }
 }
 
 /* ============================================================

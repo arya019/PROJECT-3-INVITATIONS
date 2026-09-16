@@ -11,6 +11,14 @@
   --font-bn: 'Hind Siliguri', sans-serif;
   --font-bn-serif: 'Noto Serif Bengali', serif;
   --font-en: 'Playfair Display', serif;
+  /* ---- per-theme hero glow (applied in style.css to .ev-title,
+         .hero .en, .hero-names and .theme-icon on event pages) ---- */
+  --title-glow:       none;   /* text-shadow for the event title */
+  --title-glow-bright: none;  /* 50% pulse peak for the title */
+  --subtitle-glow:    none;   /* text-shadow for the english subtitle */
+  --names-glow:       none;   /* text-shadow for "বর ❤ কনে" */
+  --names-glow-bright: none;  /* 50% pulse peak for the names */
+  --icon-glow:        none;   /* filter drop-shadow for the theme icon */
 }
 
 /* ==========================================================
@@ -35,6 +43,13 @@ body[data-theme="warm-yellow"] {
   --head-font: var(--font-bn);          /* casual Bengali */
   --deco-color-1: #e8b94a;
   --deco-color-2: #d98a2b;
+  /* hero glow */
+  --title-glow:       0 0 12px rgba(201,162,39,0.55), 0 0 24px rgba(201,162,39,0.25);
+  --title-glow-bright:0 0 16px rgba(201,162,39,0.75), 0 0 32px rgba(201,162,39,0.4);
+  --subtitle-glow:    0 0 8px rgba(160,90,44,0.4);
+  --names-glow:       0 0 12px rgba(201,162,39,0.6);
+  --names-glow-bright:0 0 16px rgba(201,162,39,0.8);
+  --icon-glow:        drop-shadow(0 0 10px rgba(201,162,39,0.5));
 }
 
 /* ==========================================================
@@ -59,6 +74,13 @@ body[data-theme="marigold"] {
   --head-font: var(--font-bn-serif);
   --deco-color-1: #ff7b1c;
   --deco-color-2: #e74c1a;
+  /* hero glow — ORANGE-RED, because gold is invisible on marigold */
+  --title-glow:       0 0 12px rgba(179,71,0,0.7), 0 0 24px rgba(255,200,60,0.6), 0 0 40px rgba(255,200,60,0.3);
+  --title-glow-bright:0 0 18px rgba(179,71,0,0.85), 0 0 36px rgba(255,200,60,0.8), 0 0 50px rgba(255,200,60,0.35);
+  --subtitle-glow:    0 0 10px rgba(122,31,15,0.5);
+  --names-glow:       0 0 14px rgba(179,71,0,0.8), 0 0 28px rgba(255,200,60,0.5);
+  --names-glow-bright:0 0 18px rgba(179,71,0,0.9), 0 0 36px rgba(255,200,60,0.7);
+  --icon-glow:        drop-shadow(0 0 14px rgba(255,200,60,0.9));
 }
 
 /* ==========================================================
@@ -67,23 +89,30 @@ body[data-theme="marigold"] {
    (most formal)
    ========================================================== */
 body[data-theme="royal-red"] {
-  --bg: #fbf5ec;
-  --bg2: #f0e3d2;
-  --ink: #5d0f0f;
-  --ink-soft: #8a1c1c;
-  --accent: #d9a441;            /* gold */
-  --accent2: #b8985f;
-  --card-bg: #fffdf7;
-  --border: #b8985f;
-  --glow: rgba(217, 164, 65, .45);
-  --hero-1: #fdf6e9;
-  --hero-2: #f3e3c8;
-  --cta-bg: #7a1f1f;
-  --cta-text: #f7e7c4;
-  --frame-color: #7a1f1f;       /* creates the formal border frame */
+  --bg: #8b1a1a;             /* DEEP maroon red — the whole page */
+  --bg2: #6b0f0f;            /* darker red for the gradient */
+  --ink: #f4d47c;            /* gold text on dark */
+  --ink-soft: #fde8c8;       /* soft cream */
+  --accent: #e6c25a;         /* gold */
+  --accent2: #f6e7a1;
+  --card-bg: #a52a2a;
+  --border: #d9a441;
+  --glow: rgba(230, 194, 90, .5);
+  --hero-1: #8b1a1a;
+  --hero-2: #5f0d0d;
+  --cta-bg: #f4d47c;
+  --cta-text: #7a1f1f;
+  --frame-color: #f4d47c;     /* gold border frame on the deep red */
   --head-font: var(--font-bn-serif);
-  --deco-color-1: #a01414;
-  --deco-color-2: #d9a441;
+  --deco-color-1: #e6c25a;
+  --deco-color-2: #f4d47c;
+  /* hero glow — gold, royal, like the biye landing card */
+  --title-glow:       0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5), 0 0 45px rgba(244,212,124,0.25);
+  --title-glow-bright:0 0 18px rgba(244,212,124,1), 0 0 36px rgba(244,212,124,0.7), 0 0 55px rgba(244,212,124,0.35);
+  --subtitle-glow:    0 0 10px rgba(253,232,200,0.7);
+  --names-glow:       0 0 14px rgba(244,212,124,1), 0 0 28px rgba(244,212,124,0.6);
+  --names-glow-bright:0 0 18px rgba(244,212,124,1), 0 0 36px rgba(244,212,124,0.8);
+  --icon-glow:        drop-shadow(0 0 14px rgba(244,212,124,0.85));
 }
 
 /* ==========================================================
@@ -109,6 +138,13 @@ body[data-theme="emerald-gold"] {
   --head-font: var(--font-bn-serif);
   --deco-color-1: #e6c25a;
   --deco-color-2: #f6e7a1;
+  /* hero glow — the reference gold glow */
+  --title-glow:       0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5);
+  --title-glow-bright:0 0 16px rgba(244,212,124,1), 0 0 32px rgba(244,212,124,0.7);
+  --subtitle-glow:    0 0 8px rgba(232,217,168,0.7);
+  --names-glow:       0 0 14px rgba(244,212,124,1), 0 0 28px rgba(244,212,124,0.6);
+  --names-glow-bright:0 0 18px rgba(244,212,124,1), 0 0 36px rgba(244,212,124,0.8);
+  --icon-glow:        drop-shadow(0 0 12px rgba(244,212,124,0.85));
 }
 
 /* ==========================================================
