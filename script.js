@@ -210,10 +210,12 @@ function initEnvelope() {
   env.addEventListener("click", () => {
     env.classList.add("open");
     startMusicOnEnvelope();
+    // let the full sequence play: flap opens (0.7s) → card slides out
+    // & settles (→2.0s), then fade the whole overlay away to reveal the page.
     setTimeout(() => {
       const ov = $(".envelope-overlay");
       if (ov) ov.classList.add("gone");
-    }, 1200);
+    }, 3000);
   });
 }
 
