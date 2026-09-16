@@ -3,7 +3,7 @@
    ------------------------------------------------------------
    index.html holds all five views as <section class="view">.
    Only ONE view is visible at a time. script.js:
-     • switches views by URL hash  (#landing, #aiburo-bhat, …)
+     • switches views by URL hash  (#home, #aiburo-bhat, …)
      • fills every view from config.js (the WEDDING object)
      • drives the ONE shared <audio> (never recreated → music
        keeps playing across view switches, even on mobile)
@@ -18,7 +18,7 @@ const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const W = window.WEDDING || {};
 
 // The five "pages" as section ids (used for hash routing)
-const VIEW_IDS = ["landing", "aiburo-bhat", "gaye-holud", "biye", "bojhat"];
+const VIEW_IDS = ["home", "aiburo-bhat", "gaye-holud", "biye", "bojhat"];
 const LANDING_TITLE = "বিয়েয়ের আমন্ত্রণ — Wedding Invitation";
 
 /* ============================================================
@@ -38,7 +38,7 @@ const DECO = {
 
 function buildDecoration() {
   $$(".floating-deco").forEach(wrap => {
-    const sec = wrap.closest("#landing, section[data-theme]");
+    const sec = wrap.closest("#home, section[data-theme]");
     const theme = sec ? sec.dataset.theme : (document.body.dataset.theme || "home");
     const conf = DECO[theme] || DECO.home;
 
@@ -126,6 +126,7 @@ function initReveal() {
    • the page never reloads → the single <audio> never restarts.
    ============================================================ */
 function initNav() {
+  // show a view (no history changes here — that's the caller's job)
   function switchView(id) {
     const target = document.getElementById(id);
     if (!target) return;
@@ -137,7 +138,7 @@ function initNav() {
     // toggle, back buttons, royal-red frame) and body bg take its colors
     document.body.dataset.theme = target.dataset.theme || "home";
     // keep the tab title meaningful
-    if (id === "landing") {
+    if (id === "home") {
       document.title = LANDING_TITLE;
     } else {
       const sec = $("[data-event]", target);
@@ -145,31 +146,58 @@ function initNav() {
       const ev = (W.events || {})[key];
       document.title = ev ? `${ev.titleBn} — ${W.groom} ও ${W.bride}` : LANDING_TITLE;
     }
-    // jump to the top instantly (don't inherit the CSS smooth-scroll)
-    try { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
+  }
+
+  // scroll back to the top on view changes (smooth for user clicks)
+  function scrollTop(smooth) {
+    try { window.scrollTo({ top: 0, left: 0, behavior: smooth ? "smooth" : "auto" }); }
     catch (e) { window.scrollTo(0, 0); }
+  }
+
+  // navigate to a view. push=true adds a history entry (card click);
+  // push=false swaps the URL in place (no extra entry for back/forward).
+  function go(id, push) {
+    if (VIEW_IDS.indexOf(id) === -1) id = "home";
+    if (location.hash !== "#" + id) {
+      if (push) history.pushState({ section: id }, "", "#" + id);
+      else history.replaceState({ section: id }, "", "#" + id);
+    }
+    switchView(id);
   }
 
   // clicking an <a href="#view-id"> — intercept so we control the switch
   document.addEventListener("click", (e) => {
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
+    // '← মূল পাতা' (back to home) → behave exactly like the phone Back
+    // (popstate then switches to whatever the URL now points at).
+    if (a.classList.contains("btn-back")) {
+      e.preventDefault();
+      history.back();
+      return;
+    }
     const id = decodeURIComponent(a.getAttribute("href").slice(1));
     if (VIEW_IDS.indexOf(id) === -1) return;   // #events / #details-* → let it scroll
     e.preventDefault();
-    if (location.hash === "#" + id) { switchView(id); }  // already there → just jump
-    else location.hash = id;                             // push history → hashchange switches
+    if (location.hash === "#" + id) { switchView(id); scrollTop(true); }  // already there → just jump
+    else { go(id, true); scrollTop(true); }                               // push history + smooth scroll
   });
 
-  // browser back/forward (and deep links) drive the view via the hash
-  window.addEventListener("hashchange", () => {
+  // browser back/forward → switch to the section the URL now points at
+  // (no new history entry — this is the pop itself making it happen)
+  window.addEventListener("popstate", () => {
     const id = location.hash.replace("#", "");
-    if (VIEW_IDS.indexOf(id) !== -1) switchView(id);
+    switchView(VIEW_IDS.indexOf(id) !== -1 ? id : "home");
+    scrollTop(true);
   });
 
-  // on first load, honour a deep-link hash (e.g. an invite sent as /#biye)
+  // initial load: seed history so the FIRST Back press returns home
+  // (or honours a deep-link like /#biye) instead of exiting the site.
   const initial = location.hash.replace("#", "");
-  if (VIEW_IDS.indexOf(initial) !== -1) switchView(initial);
+  const seed = VIEW_IDS.indexOf(initial) !== -1 ? initial : "home";
+  history.replaceState({ section: seed }, "", "#" + seed);
+  switchView(seed);
+  scrollTop(false);
 }
 
 /* ============================================================
@@ -203,7 +231,11 @@ function initEnvelope() {
      (no time-tracking needed — the audio never stops).
    ============================================================ */
 
-const MUSIC_STATE = { LAST_MUTE: "musicMuted" };   // "1" = muted
+const MUSIC_STATE = {
+  LAST_MUTE: "musicMuted",     // "1" = muted
+  STARTED:   "musicStarted",   // "true" once the user has started the music
+  TIME:      "musicCurrentTime" // seconds, for resuming after a tab switch
+};
 
 function getLS(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
 function setLS(key, val) { try { localStorage.setItem(key, val); } catch (e) { /* ignore */ } }
@@ -242,18 +274,65 @@ function toggleMusic() {
   updateMusicToggleIcon();
 }
 
+/* Ramp an audio element's volume to `to` over `ms` ms (0.5 s fade). */
+function fadeAudio(a, to, ms) {
+  const from = a.volume;
+  const start = performance.now();
+  const step = (now) => {
+    const t = Math.min(1, (now - start) / ms);
+    a.volume = from + (to - from) * (t * t);   // ease-out, feels smooth
+    if (t < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/* Play with a smooth fade-in from silence (used for start & resume). */
+function playFaded(a) {
+  if (!a) return;
+  a.volume = 0;
+  const p = a.play();
+  if (p && p.catch) p.catch(() => { /* autoplay blocked → silent */ });
+  fadeAudio(a, 1, 500);
+}
+
+/* User returned to the tab: if music had started and isn't muted,
+   resume it where it stopped. */
+function resumeMusic() {
+  const a = musicAudio();
+  if (!a) return;
+  const started = getLS(MUSIC_STATE.STARTED) === "true";
+  const muted   = getLS(MUSIC_STATE.LAST_MUTE) === "1";
+  if (started && !muted && a.paused) playFaded(a);
+}
+
+/* Lock-screen / notification media controls (mobile). Requires a gesture
+   to play, but pause works everywhere and the wrapper is optional. */
+function initMediaSession() {
+  if (!("mediaSession" in navigator)) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title:    "Shehnai - Bengali Wedding",
+      artist:   `${W.groomEn || W.groom} & ${W.brideEn || W.bride} Wedding`,
+      album:    "Wedding Invitation"
+    });
+    navigator.mediaSession.setActionHandler("play",  () => playFaded(musicAudio()));
+    navigator.mediaSession.setActionHandler("pause", () => { const a = musicAudio(); if (a) a.pause(); });
+  } catch (e) { /* media session unsupported → skip */ }
+}
+
 /* The envelope click — first user gesture that starts the music.
    Respects a previously-saved mute state. */
 function startMusicOnEnvelope() {
   const a = musicAudio();
   if (!a) return;
   a.muted = getLS(MUSIC_STATE.LAST_MUTE) === "1";   // honor remembered mute
-  const p = a.play();                                // begin now, in this gesture
-  if (p && p.catch) p.catch(() => { /* blocked / missing file → silent */ });
+  setLS(MUSIC_STATE.STARTED, "true");              // remember for tab-return resume
+  playFaded(a);                                    // begin now, in this gesture, fading in
   updateMusicToggleIcon();
 }
 
-/* Wire the toggle, apply saved mute, and attach the buffering spinner. */
+/* Wire the toggle, apply saved mute, attach the buffering spinner, and
+   keep the music alive across tab switches (visibility / focus + resume). */
 function initMusic() {
   const a = musicAudio();
   const toggle = $(".music-toggle");
@@ -269,6 +348,28 @@ function initMusic() {
   a.addEventListener("canplay",  () => setMusicLoading(false));
   a.addEventListener("playing",  () => setMusicLoading(false));
   a.addEventListener("error",    () => setMusicLoading(false));
+
+  initMediaSession();
+
+  // if the user had the music going last time, resume from the saved spot
+  // (autoplay may be blocked on mobile → silent .catch(), the toggle/card
+  // then becomes the user gesture that plays it).
+  const started = getLS(MUSIC_STATE.STARTED) === "true";
+  if (started && !a.muted) {
+    const t = parseFloat(getLS(MUSIC_STATE.TIME) || "0");
+    if (isFinite(t) && t > 0) a.currentTime = t;
+    playFaded(a);
+  }
+
+  // save the playback position every 250 ms so we can resume mid-song
+  setInterval(() => {
+    if (!a.paused) setLS(MUSIC_STATE.TIME, String(a.currentTime));
+  }, 250);
+
+  // when the user comes back to the tab, resume music from where it stopped
+  const onVisible = () => { if (document.visibilityState === "visible") resumeMusic(); };
+  document.addEventListener("visibilitychange", onVisible);
+  window.addEventListener("focus", () => { if (document.visibilityState === "visible") resumeMusic(); });
 }
 
 /* ============================================================
@@ -511,7 +612,7 @@ function downloadCard(el, filename) {
       const ctx = canvas.getContext("2d");
       ctx.scale(scale, scale);
       // card bg follows the view it belongs to (emerald view = dark card)
-      const view = el.closest("#landing, section[data-theme]");
+      const view = el.closest("#home, section[data-theme]");
       ctx.fillStyle = (view && view.dataset.theme) === "emerald-gold" ? "#0a3d2e" : "#fffdf6";
       ctx.fillRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);

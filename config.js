@@ -154,14 +154,14 @@ const WEDDING = {
      ═══════════════════════════════════════════════════════════════ */
   cardThemes: {
     aiburoBhat: {
-      bg:       "#fdf1d6",   // soft warm cream
-      title:    "#6b1f1f",   // deep maroon
-      subtitle: "#a05a2c",   // warm brown
-      accent:   "#c9a227",   // gold
+      bg:       "#5a2a1a",   // deep warm brown
+      title:    "#f4d47c",   // warm gold
+      subtitle: "#e8c98f",   // soft cream-gold
+      accent:   "#d4a44a",   // darker gold
       // per-theme glow (text-shadow for title, subtitle; drop-shadow for icon)
-      titleGlow:    "0 0 12px rgba(201,162,39,0.55), 0 0 24px rgba(201,162,39,0.25)",
-      subtitleGlow: "0 0 8px rgba(160,90,44,0.40)",
-      iconGlow:     "drop-shadow(0 0 10px rgba(201,162,39,0.5))"
+      titleGlow:    "0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5)",
+      subtitleGlow: "0 0 8px rgba(232,201,143,0.6)",
+      iconGlow:     "drop-shadow(0 0 12px rgba(244,212,124,0.85))"
     },
     gayeHolud: {
       bg:       "#f4a300",   // bright marigold

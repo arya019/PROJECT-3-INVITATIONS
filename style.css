@@ -171,7 +171,7 @@ body[data-theme="royal-red"]::before {
   flex-wrap: wrap;
   justify-content: center;
 }
-.hero-names .heartbeat { color: var(--accent); animation: heartBeat 1.2s ease-in-out infinite; display: inline-block; }
+.hero-names .heartbeat { color: var(--accent); animation: heartBeat 1.4s ease-in-out infinite; display: inline-block; }
 
 .hero-cta { margin-top: 2.2rem; }
 
@@ -389,7 +389,128 @@ body[data-theme="royal-red"]::before {
 /* ============================================================
    HOME PAGE
    ============================================================ */
-.home-hero { min-height: 78vh; justify-content: center; }
+.home-hero {
+  min-height: 78vh;
+  max-width: 700px;
+  width: 92vw;
+  margin: 0 auto;
+  padding: 6rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* light warm gradient + subtle alpona dot overlay */
+  background:
+    radial-gradient(circle, rgba(139,26,26,.05) 1.2px, transparent 1.4px) 0 0 / 26px 26px,
+    linear-gradient(180deg, #fdf6e9 0%, #f5e8c8 50%, #fdf6e9 100%);
+  border: none;
+  box-shadow: none;
+}
+
+/* ── decorative divider (─── ❁ ───) ── */
+.home-hero .hero-deco {
+  color: #c9a227;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  width: 220px;
+  line-height: 1;
+  opacity: 0.85;
+}
+/*间距: divider#1 → ॥ (18px), poetic2 → divider#2 (24px), divider#2 → button (28px) */
+.home-hero .hero-deco:first-child { margin-bottom: 18px; }
+.home-hero .hero-deco:last-of-type { margin-top: 24px; margin-bottom: 28px; }
+
+/* ── ॥ blessing line ── */
+.home-hero .hero-bless {
+  font-family: 'Noto Serif Devanagari','Noto Sans Devanagari', var(--font-bn), serif;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  color: #c9a227;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+/* ── couple names ── */
+.home-hero .hero-names {
+  margin-top: 18px;
+  font-size: clamp(2rem, 5.5vw, 3.2rem);
+  font-weight: 700;
+  color: #8b1a1a;                 /* deep maroon */
+  text-shadow: 0 0 8px rgba(201,162,39,0.35); /* subtle gold halo */
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.home-hero .hero-names .heartbeat {
+  color: #e94b6b;                 /* romantic red */
+  font-size: 1em;                 /* same size as names */
+  text-shadow: 0 0 12px rgba(233,75,107,0.5); /* soft pink glow */
+  vertical-align: middle;
+}
+
+/* ── poetic lines ── */
+.home-hero .hero-poem {
+  margin-top: 24px;
+  font-size: 1.05rem;
+  color: #6b1f1f;                 /* medium maroon — readable */
+  font-style: italic;
+  line-height: 1.8;
+}
+.home-hero .hero-invite {
+  margin-top: 16px;
+  font-size: 1rem;
+  color: #6b1f1f;
+  line-height: 1.8;
+  max-width: 620px;
+}
+
+/* ── button ── */
+.home-hero .hero-cta {
+  margin-top: 28px;
+  padding: 14px 32px;
+  font-size: 1rem;
+  background: #8b1a1a;
+  color: #fdf6e9;
+  border: 1px solid #c9a227;
+  border-radius: 30px;
+  transition: background .3s, color .3s;
+}
+.home-hero .hero-cta:hover {
+  background: #c9a227;
+  color: #8b1a1a;
+}
+
+/* ── entrance fade-slide, staggered ── */
+.home-hero > * {
+  animation: fadeSlideIn .7s ease-out both;
+}
+.home-hero > *:nth-child(1) { animation-delay: 0s;   } /* divider#1 */
+.home-hero > *:nth-child(2) { animation-delay: .2s;  } /* ॥ */
+.home-hero > *:nth-child(3) { animation-delay: .4s;  } /* names */
+.home-hero > *:nth-child(4) { animation-delay: .6s;  } /* poetic line 1 */
+.home-hero > *:nth-child(5) { animation-delay: .8s;  } /* poetic line 2 */
+.home-hero > *:nth-child(6) { animation-delay: 1.0s; } /* divider#2 */
+.home-hero > *:nth-child(7) { animation-delay: 1.2s; } /* button */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-hero > * { animation: none; opacity: 1; }
+}
+
+/* ── mobile ── */
+@media (max-width: 600px) {
+  .home-hero {
+    width: 92vw;
+    padding: 5rem 1rem 3rem;
+    min-height: 72vh;
+  }
+  .home-hero .hero-names { font-size: 2rem; gap: .35rem; }
+  .home-hero .hero-poem  { font-size: .95rem; }
+  .home-hero .hero-invite { font-size: .95rem; }
+  .home-hero .hero-cta   { padding: 12px 26px; }
+}
 
 /* ── EVENT CARDS — matching set, only colours differ ────────── */
 /* Colours are driven by config.js → cardThemes, applied as
@@ -443,10 +564,10 @@ body[data-theme="royal-red"]::before {
 /* ── guaranteed theme fallbacks (script.js overrides these from
    config.js → cardThemes, which is the single source of truth) ── */
 .ec-aiburo {
-  --ev-bg:#fdf1d6; --ev-title:#6b1f1f; --ev-subtitle:#a05a2c; --ev-accent:#c9a227;
-  --ev-title-glow: 0 0 12px rgba(201,162,39,0.55), 0 0 24px rgba(201,162,39,0.25);
-  --ev-subtitle-glow: 0 0 8px rgba(160,90,44,0.40);
-  --ev-icon-glow: drop-shadow(0 0 10px rgba(201,162,39,0.5));
+  --ev-bg:#5a2a1a; --ev-title:#f4d47c; --ev-subtitle:#e8c98f; --ev-accent:#d4a44a;
+  --ev-title-glow: 0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5);
+  --ev-subtitle-glow: 0 0 8px rgba(232,201,143,0.6);
+  --ev-icon-glow: drop-shadow(0 0 12px rgba(244,212,124,0.85));
 }
 .ec-holud {
   --ev-bg:#f4a300; --ev-title:#7a1f0f; --ev-subtitle:#b34700; --ev-accent:#c9a227;
@@ -990,9 +1111,9 @@ body[data-theme="royal-red"]::before {
 }
 @keyframes heartBeat {
   0%,100% { transform: scale(1); }
-  25%     { transform: scale(1.25); }
-  40%     { transform: scale(1); }
-  60%     { transform: scale(1.15); }
+  25%     { transform: scale(1.15); }
+  50%     { transform: scale(1); }
+  75%     { transform: scale(1.1); }
 }
 @keyframes pulseGlow { 0%,100%{opacity:.6} 50%{opacity:1} }
 @keyframes numBounce {

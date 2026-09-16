@@ -6,7 +6,7 @@
   <title>বিয়েয়ের আমন্ত্রণ — Wedding Invitation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700;900&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700;900&family=Noto+Serif+Devanagari:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="themes.css">
   <link rel="preload" as="audio" type="audio/mpeg" href="images/shehnai.mp3">
@@ -15,7 +15,7 @@
        This is a SINGLE-PAGE app. All five "pages" live in this one
        file as <section class="view"> blocks, and only ONE is visible
        at a time — script.js switches them by URL hash
-       (#aiburo-bhat, #gaye-holud, #biye, #bojhat, #landing).
+       (#aiburo-bhat, #gaye-holud, #biye, #bojhat, #home).
 
        Because nothing in the browser reloads when you switch, the one
        <audio> below keeps playing non-stop — mobile browsers never get
@@ -39,7 +39,7 @@
   <button class="music-toggle js-music" aria-label="মিউজিক">🔊</button>
 
   <!-- ═══════════════════════ VIEW: LANDING ═══════════════════════ -->
-  <section id="landing" class="view active" data-theme="home">
+  <section id="home" class="view active" data-theme="home">
 
     <div class="floating-deco" aria-hidden="true"></div>
 
@@ -131,14 +131,16 @@
 
     <!-- hero -->
     <header class="hero home-hero">
-      <div class="hero-kicker">Shubho · Wedding</div>
+      <div class="hero-deco">─── ❁ ───</div>
+      <div class="hero-bless">॥ শ্রী শ্রী প্রজাপতয়ে নমঃ ॥</div>
       <h1 class="hero-names">
         <span class="js-groom-h">বর</span>
         <span class="heartbeat">❤</span>
         <span class="js-bride-h">কনে</span>
       </h1>
-      <div class="hero-line js-greeting">আমাদের বিবাহের শুভ মুহূর্তে আপনাকে সাদর আমন্ত্রণ</div>
-      <div class="en" style="margin-top:.7rem">Wedding Invitation</div>
+      <div class="hero-poem">দুইটা হৃদয়, একটাই পথ —<br>ভালোবাসার আলোয় শুরু হচ্ছে নতুন অধ্যায়।</div>
+      <div class="hero-invite">পরম শ্রদ্ধা আর ভালোবাসায়,<br>আমরা আপনাকে আমন্ত্রণ জানাচ্ছি<br>আমাদের জীবনের সবচেয়ে সুন্দর দিনটির সাক্ষী হতে।</div>
+      <div class="hero-deco">─── ❁ ───</div>
       <a class="btn hero-cta" href="#events">অনুষ্ঠানসমূহ দেখুন</a>
     </header>
 
@@ -221,7 +223,7 @@
   <!-- ═══════════════════ VIEW: আইবুড়ো ভাত ═══════════════════ -->
   <section id="aiburo-bhat" class="view" data-event="aiburoBhat" data-theme="warm-yellow">
 
-    <a class="btn-back" href="#landing">← মূল পাতা</a>
+    <a class="btn-back" href="#home">← মূল পাতা</a>
     <div class="floating-deco" aria-hidden="true"></div>
 
     <header class="hero">
@@ -329,7 +331,7 @@
   <!-- ═══════════════════ VIEW: গায়ে হলুদ ═══════════════════ -->
   <section id="gaye-holud" class="view" data-event="gayeHolud" data-theme="marigold">
 
-    <a class="btn-back" href="#landing">← মূল পাতা</a>
+    <a class="btn-back" href="#home">← মূল পাতা</a>
     <div class="floating-deco" aria-hidden="true"></div>
 
     <header class="hero">
@@ -437,7 +439,7 @@
   <!-- ═══════════════════ VIEW: বিবাহ ═══════════════════ -->
   <section id="biye" class="view" data-event="biye" data-theme="royal-red">
 
-    <a class="btn-back" href="#landing">← মূল পাতা</a>
+    <a class="btn-back" href="#home">← মূল পাতা</a>
     <div class="floating-deco" aria-hidden="true"></div>
 
     <header class="hero">
@@ -545,7 +547,7 @@
   <!-- ═══════════════════ VIEW: বৌভাত / রিসেপশন ═══════════════════ -->
   <section id="bojhat" class="view" data-event="bojhat" data-theme="emerald-gold">
 
-    <a class="btn-back" href="#landing">← মূল পাতা</a>
+    <a class="btn-back" href="#home">← মূল পাতা</a>
     <div class="floating-deco" aria-hidden="true"></div>
 
     <header class="hero">

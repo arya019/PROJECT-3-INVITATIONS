@@ -23,33 +23,33 @@
 
 /* ==========================================================
    THEME 1 · আইবুড়ো ভাত ·  "warm-yellow"
-   soft cream/beige + warm yellow glow + deep maroon text
+   deep warm brown + gold text & glow (matches the dark-card set)
    ========================================================== */
 body[data-theme="warm-yellow"] {
-  --bg: #fbf3e0;
-  --bg2: #f5e3bb;
-  --ink: #6d1f1f;               /* deep maroon text */
-  --ink-soft: #8a3a2b;
-  --accent: #a6531f;
-  --accent2: #e0b23d;
-  --card-bg: #fffdf4;
-  --border: #d7ad5e;
-  --glow: rgba(233, 188, 74, .5);
-  --hero-1: #fdeeca;
-  --hero-2: #f6dcae;
-  --cta-bg: #b6713a;
-  --cta-text: #fff8ea;
-  --frame-color: transparent;
-  --head-font: var(--font-bn);          /* casual Bengali */
-  --deco-color-1: #e8b94a;
-  --deco-color-2: #d98a2b;
-  /* hero glow */
-  --title-glow:       0 0 12px rgba(201,162,39,0.55), 0 0 24px rgba(201,162,39,0.25);
-  --title-glow-bright:0 0 16px rgba(201,162,39,0.75), 0 0 32px rgba(201,162,39,0.4);
-  --subtitle-glow:    0 0 8px rgba(160,90,44,0.4);
-  --names-glow:       0 0 12px rgba(201,162,39,0.6);
-  --names-glow-bright:0 0 16px rgba(201,162,39,0.8);
-  --icon-glow:        drop-shadow(0 0 10px rgba(201,162,39,0.5));
+  --bg: #5a2a1a;               /* deep warm brown */
+  --bg2: #3d1a0f;              /* darker brown for gradient */
+  --ink: #f4d47c;              /* warm gold text */
+  --ink-soft: #e8c98f;         /* soft cream-gold */
+  --accent: #f4d47c;           /* gold */
+  --accent2: #d4a44a;          /* darker gold */
+  --card-bg: #4a2214;          /* slightly lighter brown for inner panels */
+  --border: #c9a227;           /* gold border */
+  --glow: rgba(244, 212, 124, .5);
+  --hero-1: #5a2a1a;
+  --hero-2: #3d1a0f;
+  --cta-bg: #c9a227;           /* gold button */
+  --cta-text: #3d1a0f;         /* dark brown on gold button */
+  --frame-color: #c9a227;      /* gold border frame */
+  --head-font: var(--font-bn);
+  --deco-color-1: #d4a44a;
+  --deco-color-2: #c9a227;
+  /* hero glow — gold on dark brown (matches Bojhat style) */
+  --title-glow:       0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5);
+  --title-glow-bright:0 0 16px rgba(244,212,124,1), 0 0 32px rgba(244,212,124,0.7);
+  --subtitle-glow:    0 0 8px rgba(232,201,143,0.6);
+  --names-glow:       0 0 14px rgba(244,212,124,1), 0 0 28px rgba(244,212,124,0.6);
+  --names-glow-bright:0 0 18px rgba(244,212,124,1), 0 0 36px rgba(244,212,124,0.8);
+  --icon-glow:        drop-shadow(0 0 12px rgba(244,212,124,0.85));
 }
 
 /* ==========================================================
