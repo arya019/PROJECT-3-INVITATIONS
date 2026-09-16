@@ -43,17 +43,90 @@
 
     <div class="floating-deco" aria-hidden="true"></div>
 
-    <!-- opening envelope -->
+    <!-- ═════════════ opening envelope (cute Bengali traditional) ═════════════
+         The envelope is a real <button> (accessible). A button only allows
+         phrasing content, so every visual layer is a <span> or inline <svg>.
+         The envelope box is sized with aspect-ratio and every layer is
+         absolutely positioned against it — so nothing can collapse or float
+         loose. The cartoon couple peeks over the top; hint sits below.
+         ══════════════════════════════════════════════════════════════════ -->
     <div class="envelope-overlay">
-      <div class="envelope" id="envelope">
-        <div class="env-letter">
-          <span class="heart">❤</span>
-          <p>শুভ উদযাপনে স্বাগতম</p>
-        </div>
-        <div class="env-flap"></div>
-        <div class="env-back env-pocket"></div>
-        <div class="env-hint">খুলতে চাপ দিন ✉</div>
+
+      <!-- cartoon couple — standing / peeking above the envelope -->
+      <div class="cartoon-wrap" aria-hidden="true">
+        <span class="cartoon-glow"></span>
+        <span class="cartoon-shadow"></span>
+        <span class="couple-eyes"><span class="eye eye-l"></span><span class="eye eye-r"></span></span>
+        <span class="couple-img">
+          <img class="cartoon-couple" src="images/couple-cartoon.png" alt=""
+               onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+          <span class="couple-emoji" hidden>👫</span>
+        </span>
+        <span class="fx sparkle s1">✦</span>
+        <span class="fx sparkle s2">✨</span>
+        <span class="fx sparkle s3">✧</span>
+        <span class="fx heart h1">❤</span>
+        <span class="fx heart h2">💖</span>
+        <span class="fx heart h3">❤</span>
       </div>
+
+      <!-- the envelope (main element) -->
+      <button type="button" id="envelope" class="envelope" aria-label="Open invitation">
+
+        <!-- paper body -->
+        <span class="env-body"></span>
+        <!-- bottom triangular flap -->
+        <span class="env-bottom"></span>
+
+        <!-- corner alpona flourishes (swap these SVG paths to change them) -->
+        <svg class="env-corner corner-tl" viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"><path d="M8 50 C8 22 22 10 50 8 M8 36 C22 32 20 16 36 12"/></g></svg>
+        <svg class="env-corner corner-tr" viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"><path d="M52 50 C52 22 38 10 10 8 M52 36 C38 32 40 16 24 12"/></g></svg>
+        <svg class="env-corner corner-bl" viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"><path d="M8 10 C8 38 22 50 50 52 M8 24 C22 28 20 44 36 48"/></g></svg>
+        <svg class="env-corner corner-br" viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"><path d="M52 10 C52 38 38 50 10 52 M52 24 C38 28 40 44 24 48"/></g></svg>
+
+        <!-- top-center kalash / mangal-ghat emblem (swap this SVG for an <img>) -->
+        <span class="env-kalash" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="32" height="32" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round">
+            <path d="M14 22 h20 v5 a10 6 0 0 1 -20 0 z"/><path d="M12 18 h24"/>
+            <path d="M19 12 a5 5 0 0 1 10 0 z"/>
+            <path d="M18 13 C11 8 7 8 3 9 M30 13 C37 8 41 8 45 9"/>
+          </svg>
+        </span>
+
+        <!-- vertical rows of small dots along left & right edges -->
+        <span class="env-side side-l" aria-hidden="true"></span>
+        <span class="env-side side-r" aria-hidden="true"></span>
+
+        <!-- center wax seal (shows while the envelope is closed) -->
+        <span class="env-seal"><span class="seal-rk">R ♥ K</span></span>
+
+        <!-- the paper card that slides OUT on open (hidden until then) -->
+        <span class="env-letter">
+          <span class="env-top-bn">শুভ বিবাহ</span>
+          <span class="env-inv">আমন্ত্রণ</span>
+          <span class="env-couple">Raunak ♥ Kakoli</span>
+        </span>
+
+        <!-- top triangular flap (opens upward) with alpona dashed edges -->
+        <span class="env-top">
+          <svg class="env-top-deco" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <polygon points="0,0 50,100 100,0" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="4 3"/>
+          </svg>
+        </span>
+
+        <!-- marigold ("genda phool") garland just above the top edge -->
+        <span class="marigold-row" aria-hidden="true">
+          <span class="mg"></span><span class="mg"></span><span class="mg"></span><span class="mg"></span><span class="mg"></span><span class="mg"></span><span class="mg"></span>
+        </span>
+
+        <!-- repeating paisley/alpona row along the bottom edge -->
+        <span class="env-band" aria-hidden="true">
+          <span class="bp"></span><span class="bp"></span><span class="bp"></span><span class="bp"></span><span class="bp"></span><span class="bp"></span>
+        </span>
+      </button>
+
+      <!-- tap hint below the envelope -->
+      <span class="env-hint">👆 ক্লিক করুন</span>
     </div>
 
     <!-- hero -->
