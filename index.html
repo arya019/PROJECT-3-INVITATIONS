@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>বিয়েয়ের আমন্ত্রণ — Wedding Invitation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700;900&family=Noto+Serif+Devanagari:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="themes.css">
+  <link rel="preload" as="audio" type="audio/mpeg" href="images/shehnai.mp3">
+
+  <!-- ═════════════ SPA MODEL ═════════════
+       This is a SINGLE-PAGE app. All five "pages" live in this one
+       file as <section class="view"> blocks, and only ONE is visible
+       at a time — script.js switches them by URL hash
+       (#aiburo-bhat, #gaye-holud, #biye, #bojhat, #home).
+
+       Because nothing in the browser reloads when you switch, the one
+       <audio> below keeps playing non-stop — mobile browsers never get
+       a second chance to block autoplay after the first envelope click.
+       ═════════════════════════════════════ -->
+</head>
+<body data-theme="home">
+
+  <!-- ── the ONE audio element for the whole app ──
+       loop + preload=auto + playsinline   → seamless, buffered, mobile-safe.
+       It is never removed or recreated; we only mute/unmute it. -->
+  <audio id="bgMusic"
+         src="images/shehnai.mp3"
+         loop
+         preload="auto"
+         muted
+         playsinline
+         webkit-playsinline></audio>
+
+  <!-- ── music toggle (always visible, top-right) ── -->
+  <button class="music-toggle js-music" aria-label="মিউজিক">🔊</button>
+
+  <!-- ═══════════════════════ VIEW: LANDING ═══════════════════════ -->
+  <section id="home" class="view active" data-theme="home">
+
+    <div class="floating-deco" aria-hidden="true"></div>
+
+    <!-- ═════════════ opening envelope (cute Bengali traditional) ═════════════
+         The envelope is a real <button> (accessible). A button only allows
+         phrasing content, so every visual layer is a <span> or inline <svg>.
+         The envelope box is sized with aspect-ratio and every layer is
+         absolutely positioned against it — so nothing can collapse or float
+         loose. The cartoon couple peeks over the top; hint sits below.
+         ══════════════════════════════════════════════════════════════════ -->
+    <div class="envelope-overlay">
+
+      <!-- cartoon couple — standing / peeking above the envelope -->
+      <div class="cartoon-wrap" aria-hidden="true">
+        <span class="cartoon-glow"></span>
+        <span class="cartoon-shadow"></span>
+        <span class="couple-eyes"><span class="eye eye-l"></span><span class="eye eye-r"></span></span>
+        <span class="couple-img">
+          <img class="cartoon-couple" src="images/couple-cartoon.png" alt=""
+               onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+          <span class="couple-emoji" hidden>👫</span>
+        </span>
+        <span class="fx sparkle s1">✦</span>
+        <span class="fx sparkle s2">✨</span>
+        <span class="fx sparkle s3">✧</span>
+        <span class="fx heart h1">❤</span>
+        <span class="fx heart h2">💖</span>
+        <span class="fx heart h3">❤</span>
+      </div>
+
+      <!-- the envelope (main element) -->
+      <button type="button" id="envelope" class="envelope" aria-label="Open invitation">
+
+        <!-- paper body -->
+        <span class="env-body"></span>
+        <!-- bottom triangular flap -->
+        <span class="env-bottom"></span>
+
+        <!-- corner alpona flourishes (swap these SVG paths to change them) -->
+        <svg class="env-corner corner-tl" viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"><path d="M8 50 C8 22 22 10 50 8 M8 36 C22 32 20 16 36 12"/></g></svg>
+        <svg class="env-corner corner-tr" viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"><path d="M52 50 C52 22 38 10 10 8 M52 36 C38 32 40 16 24 12"/></g></svg>
+        <svg class="env-corner corner-bl" viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"><path d="M8 10 C8 38 22 50 50 52 M8 24 C22 28 20 44 36 48"/></g></svg>
+        <svg class="env-corner corner-br" viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round"><path d="M52 10 C52 38 38 50 10 52 M52 24 C38 28 40 44 24 48"/></g></svg>
+
+        <!-- top-center kalash / mangal-ghat emblem (swap this SVG for an <img>) -->
+        <span class="env-kalash" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="32" height="32" fill="none" stroke="#c9a227" stroke-width="2" stroke-linecap="round">
+            <path d="M14 22 h20 v5 a10 6 0 0 1 -20 0 z"/><path d="M12 18 h24"/>
+            <path d="M19 12 a5 5 0 0 1 10 0 z"/>
+            <path d="M18 13 C11 8 7 8 3 9 M30 13 C37 8 41 8 45 9"/>
+          </svg>
+        </span>
+
+        <!-- vertical rows of small dots along left & right edges -->
+        <span class="env-side side-l" aria-hidden="true"></span>
+        <span class="env-side side-r" aria-hidden="true"></span>
+
+        <!-- center wax seal (shows while the envelope is closed) -->
+        <span class="env-seal"><span class="seal-rk">R ♥ K</span></span>
+
+        <!-- the paper card that slides OUT on open (hidden until then) -->
+        <span class="env-letter">
+          <span class="env-top-bn">শুভ বিবাহ</span>
+          <span class="env-inv">আমন্ত্রণ</span>
+          <span class="env-couple">Rounak ♥ Kakoli</span>
+        </span>
+
+        <!-- top triangular flap (opens upward) with alpona dashed edges -->
+        <span class="env-top">
+          <svg class="env-top-deco" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <polygon points="0,0 50,100 100,0" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="4 3"/>
+          </svg>
+        </span>
+
+        <!-- marigold ("genda phool") garland just above the top edge -->
+        <span class="marigold-row" aria-hidden="true">
+          <span class="mg"></span><span class="mg"></span><span class="mg"></span><span class="mg"></span><span class="mg"></span><span class="mg"></span><span class="mg"></span>
+        </span>
+
+        <!-- repeating paisley/alpona row along the bottom edge -->
+        <span class="env-band" aria-hidden="true">
+          <span class="bp"></span><span class="bp"></span><span class="bp"></span><span class="bp"></span><span class="bp"></span><span class="bp"></span>
+        </span>
+      </button>
+
+      <!-- background: corner alpona motifs + slowly-drifting paisley (non-interactive) -->
+      <svg class="bg-corner bc-tl" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-opacity="0.35"><path d="M26 104 A60 60 0 0 1 104 26"/><path d="M18 104 A72 72 0 0 1 104 18"/><path d="M34 92 C28 70 40 52 60 46 C80 42 96 52 96 70"/></g><circle cx="60" cy="62" r="8" stroke="#c9a227" stroke-opacity="0.35"/></svg>
+      <svg class="bg-corner bc-tr" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-opacity="0.35"><path d="M26 104 A60 60 0 0 1 104 26"/><path d="M18 104 A72 72 0 0 1 104 18"/><path d="M34 92 C28 70 40 52 60 46 C80 42 96 52 96 70"/></g><circle cx="60" cy="62" r="8" stroke="#c9a227" stroke-opacity="0.35"/></svg>
+      <svg class="bg-corner bc-bl" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-opacity="0.35"><path d="M26 104 A60 60 0 0 1 104 26"/><path d="M18 104 A72 72 0 0 1 104 18"/><path d="M34 92 C28 70 40 52 60 46 C80 42 96 52 96 70"/></g><circle cx="60" cy="62" r="8" stroke="#c9a227" stroke-opacity="0.35"/></svg>
+      <svg class="bg-corner bc-br" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="2" stroke-opacity="0.35"><path d="M26 104 A60 60 0 0 1 104 26"/><path d="M18 104 A72 72 0 0 1 104 18"/><path d="M34 92 C28 70 40 52 60 46 C80 42 96 52 96 70"/></g><circle cx="60" cy="62" r="8" stroke="#c9a227" stroke-opacity="0.35"/></svg>
+
+      <svg class="bg-paisley p1" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 C6 7 4 12 7 17 C10 22 16 21 19 17 C22 13 20 8 15 5 Z" fill="#c9a227" fill-opacity="0.2"/></svg>
+      <svg class="bg-paisley p2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 C6 7 4 12 7 17 C10 22 16 21 19 17 C22 13 20 8 15 5 Z" fill="#c9a227" fill-opacity="0.2"/></svg>
+      <svg class="bg-paisley p3" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 C6 7 4 12 7 17 C10 22 16 21 19 17 C22 13 20 8 15 5 Z" fill="#c9a227" fill-opacity="0.2"/></svg>
+
+      <!-- tap hint below the envelope -->
+      <span class="env-hint">👆 ক্লিক করুন</span>
+    </div>
+
+    <!-- hero -->
+    <header class="hero home-hero">
+      <div class="hero-deco">─── ❁ ───</div>
+      <div class="hero-bless">॥ শ্রী শ্রী প্রজাপতয়ে নমঃ ॥</div>
+      <h1 class="hero-names">
+        <span class="js-groom-h">বর</span>
+        <span class="heartbeat">❤</span>
+        <span class="js-bride-h">কনে</span>
+      </h1>
+      <div class="hero-poem">দুইটা হৃদয়, একটাই পথ —<br>ভালোবাসার আলোয় শুরু হচ্ছে নতুন অধ্যায়।</div>
+      <div class="hero-invite">পরম শ্রদ্ধা আর ভালোবাসায়,<br>আমরা আপনাকে আমন্ত্রণ জানাচ্ছি<br>আমাদের জীবনের সবচেয়ে সুন্দর দিনটির সাক্ষী হতে।</div>
+      <div class="hero-deco">─── ❁ ───</div>
+      <a class="btn hero-cta" href="#events">অনুষ্ঠানসমূহ দেখুন</a>
+    </header>
+
+    <!-- the 4 event cards → switch views by hash -->
+    <main>
+      <section class="section" id="events">
+        <h2>চারটি শুভ অনুষ্ঠান</h2>
+        <p class="sub-note">প্রতিটি অনুষ্ঠানের নিজস্ব অনন্য পরিবেশ — কার্ডে চাপ দিয়ে বিস্তারিত দেখুন।</p>
+        <div class="event-grid">
+
+          <a data-card="aiburoBhat" href="#aiburo-bhat" class="event-card ec-aiburo">
+            <span class="ec-icon">🍚</span>
+            <span class="ec-bn">আইবুড়ো ভাত</span>
+            <span class="ec-en">Aiburo Bhat</span>
+            <span class="ec-divider"></span>
+            <span class="ec-date">—</span>
+            <span class="ec-date-en">—</span>
+            <span class="ec-go">খুলুন →</span>
+          </a>
+
+          <a data-card="gayeHolud" href="#gaye-holud" class="event-card ec-holud">
+            <span class="ec-icon">🌼</span>
+            <span class="ec-bn">গায়ে হলুদ</span>
+            <span class="ec-en">Gaye Holud</span>
+            <span class="ec-divider"></span>
+            <span class="ec-date">—</span>
+            <span class="ec-date-en">—</span>
+            <span class="ec-go">খুলুন →</span>
+          </a>
+
+          <a data-card="biye" href="#biye" class="event-card ec-biye">
+            <span class="ec-icon">🪔</span>
+            <span class="ec-bn">বিবাহ অনুষ্ঠান</span>
+            <span class="ec-en">Wedding Ceremony</span>
+            <span class="ec-divider"></span>
+            <span class="ec-date">—</span>
+            <span class="ec-date-en">—</span>
+            <span class="ec-go">খুলুন →</span>
+          </a>
+
+          <a data-card="bojhat" href="#bojhat" class="event-card ec-bojhat">
+            <span class="ec-icon">💍</span>
+            <span class="ec-bn">প্রীতিভোজ / বৌভাত</span>
+            <span class="ec-en">Pritibhoj / Boubhat</span>
+            <span class="ec-divider"></span>
+            <span class="ec-date">—</span>
+            <span class="ec-date-en">—</span>
+            <span class="ec-go">খুলুন →</span>
+          </a>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- ═════════════ SAVE THE DATE ═════════════ -->
+    <section class="section save-date-section reveal">
+      <div class="save-date-card">
+        <div class="sd-orn">✦ ✦ ✦</div>
+        <div class="sd-kicker">Save the Date</div>
+        <div class="sd-names"><span class="js-sd-groom">—</span> <span class="heart">❤</span> <span class="js-sd-bride">—</span></div>
+        <div class="sd-dates">২৩ – ২৫ নভেম্বর ২০২৬</div>
+        <div class="sd-events">আইবুড়ো ভাত · গায়ে হলুদ · বিবাহ · প্রীতিভোজ</div>
+        <button class="btn btn-cal js-add-calendar">📅 Add to Calendar (.ics)</button>
+        <a class="sd-map" href="https://maps.app.goo.gl/9DEkysSqcpTWJm2Q6" target="_blank" rel="noopener">
+          <iframe
+            src="https://www.google.com/maps?q=24.173839,87.906956&z=14&output=embed"
+            width="100%" height="140"
+            style="border:0;border-radius:10px;pointer-events:none"
+            loading="lazy"
+            title="Venue map preview"></iframe>
+          <span class="sd-map-hint">📍 খুলুন (Google Maps)</span>
+        </a>
+        <div class="sd-orn">✦ ✦ ✦</div>
+      </div>
+    </section>
+
+    <footer class="footer">সস্নেহে আমন্ত্রণ · <span class="js-f-groom">বর</span> <span class="heart">♥</span> <span class="js-f-bride">কনে</span></footer>
+  </section>
+
+  <!-- ═══════════════════ VIEW: আইবুড়ো ভাত ═══════════════════ -->
+  <section id="aiburo-bhat" class="view" data-event="aiburoBhat" data-theme="warm-yellow">
+
+    <a class="btn-back" href="#home">← মূল পাতা</a>
+    <div class="floating-deco" aria-hidden="true"></div>
+
+    <header class="hero">
+      <div class="theme-icon"><img class="js-icon" src="images/aiburo-icon.png" alt=""></div>
+      <div class="hero-kicker">শুভ অনুষ্ঠান</div>
+      <h1 class="ev-title js-title-bn">আইবুড়ো ভাত</h1>
+      <div class="en js-title-en">AIBURO BHAT</div>
+      <div class="hero-line js-line">মিষ্টি মুখের শুভ উদযাপন</div>
+      <div class="hero-names">
+        <span class="js-groom">বর</span>
+        <span class="heartbeat">❤</span>
+        <span class="js-bride">কনে</span>
+      </div>
+      <a class="btn btn-soft hero-cta" href="#details-aiburo-bhat">বিস্তারিত দেখুন</a>
+    </header>
+
+    <main>
+      <section id="details-aiburo-bhat" class="section">
+        <div class="card details-card reveal">
+          <div class="detail">
+            <span class="label">DATE</span>
+            <span class="value js-date">—</span>
+            <span class="value sub js-date-en">—</span>
+          </div>
+          <div class="detail">
+            <span class="label">TIME</span>
+            <span class="value js-time">—</span>
+          </div>
+          <div class="detail">
+            <span class="label">VENUE</span>
+            <span class="value js-venue">—</span>
+            <span class="value sub js-venue2">—</span>
+          </div>
+          <a class="btn js-map" href="#" target="_blank" rel="noopener">📍 Google Maps</a>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="map-card">
+          <iframe
+            src="https://www.google.com/maps?q=24.173839,87.906956&z=15&output=embed"
+            width="100%" height="300"
+            style="border:0;border-radius:12px"
+            allowfullscreen
+            loading="lazy"
+            title="Location map"></iframe>
+          <a class="btn btn-map-open js-map-open" href="#" target="_blank" rel="noopener">📍 View on Google Maps</a>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>শুভ মুহূর্তের গণনা</h2>
+        <p class="sub-note js-count-label">অনুষ্ঠান শুরুর বাকি আছে</p>
+        <div class="countdown">
+          <div class="cd-box"><div class="cd-num js-d">০০</div><div class="cd-lbl">দিন</div></div>
+          <div class="cd-box"><div class="cd-num js-h">০০</div><div class="cd-lbl">ঘণ্টা</div></div>
+          <div class="cd-box"><div class="cd-num js-m">০০</div><div class="cd-lbl">মিনিট</div></div>
+          <div class="cd-box"><div class="cd-num js-s">০০</div><div class="cd-lbl">সেকেন্ড</div></div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <h2>আমন্ত্রণ কার্ড</h2>
+        <div class="invite-card">
+          <div class="ic-orn">✦ ✦ ✦</div>
+          <div class="ic-kicker">Wedding Invitation</div>
+          <div class="ic-names js-ic-names">বর & কনে</div>
+          <div class="ic-event js-ic-event">অনুষ্ঠান</div>
+          <div class="ic-line js-ic-line">—</div>
+          <div class="ic-block ic-info">
+            <div>
+              <div class="ic-label">DATE</div>
+              <div class="ic-value js-ic-date">—</div>
+            </div>
+            <div style="margin-top:.5rem">
+              <div class="ic-label">TIME</div>
+              <div class="ic-value js-ic-time">—</div>
+            </div>
+            <div style="margin-top:.5rem">
+              <div class="ic-label">VENUE</div>
+              <div class="ic-value js-ic-venue">—</div>
+            </div>
+          </div>
+          <div class="ic-orn">✦ ✦ ✦</div>
+        </div>
+        <div style="text-align:center">
+          <button class="btn js-download">🖼️ কার্ড ছবি ডাউনলোড</button>
+        </div>
+        <div class="qr-wrap">
+          <a class="js-qr-link"><img class="qr js-qr" alt="QR"></a>
+          <div class="qr-note">📍 স্ক্যান করে লোকেশনদেখুন</div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <h2>গ্যালারি</h2>
+        <p class="sub-note">আপনার নিজের ছবি এই জায়গায় বসবে (config.js থেকে)।</p>
+        <div class="gallery js-gallery"></div>
+      </section>
+    </main>
+
+    <footer class="footer">সস্নেহে আমন্ত্রণ · <span class="js-f-groom">বর</span> <span class="heart">♥</span> <span class="js-f-bride">কনে</span></footer>
+  </section>
+
+  <!-- ═══════════════════ VIEW: গায়ে হলুদ ═══════════════════ -->
+  <section id="gaye-holud" class="view" data-event="gayeHolud" data-theme="marigold">
+
+    <a class="btn-back" href="#home">← মূল পাতা</a>
+    <div class="floating-deco" aria-hidden="true"></div>
+
+    <header class="hero">
+      <div class="theme-icon"><img class="js-icon" src="images/marigold-icon.png" alt=""></div>
+      <div class="hero-kicker">শুভ অনুষ্ঠান</div>
+      <h1 class="ev-title js-title-bn">গায়ে হলুদ</h1>
+      <div class="en js-title-en">GAYE HOLUD</div>
+      <div class="hero-line js-line">হলুদের আভায় সেজেছে ঘর</div>
+      <div class="hero-names">
+        <span class="js-groom">বর</span>
+        <span class="heartbeat">❤</span>
+        <span class="js-bride">কনে</span>
+      </div>
+      <a class="btn btn-soft hero-cta" href="#details-gaye-holud">বিস্তারিত দেখুন</a>
+    </header>
+
+    <main>
+      <section id="details-gaye-holud" class="section">
+        <div class="card details-card reveal">
+          <div class="detail">
+            <span class="label">DATE</span>
+            <span class="value js-date">—</span>
+            <span class="value sub js-date-en">—</span>
+          </div>
+          <div class="detail">
+            <span class="label">TIME</span>
+            <span class="value js-time">—</span>
+          </div>
+          <div class="detail">
+            <span class="label">VENUE</span>
+            <span class="value js-venue">—</span>
+            <span class="value sub js-venue2">—</span>
+          </div>
+          <a class="btn js-map" href="#" target="_blank" rel="noopener">📍 Google Maps</a>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="map-card">
+          <iframe
+            src="https://www.google.com/maps?q=24.173839,87.906956&z=15&output=embed"
+            width="100%" height="300"
+            style="border:0;border-radius:12px"
+            allowfullscreen
+            loading="lazy"
+            title="Location map"></iframe>
+          <a class="btn btn-map-open js-map-open" href="#" target="_blank" rel="noopener">📍 View on Google Maps</a>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>শুভ মুহূর্তের গণনা</h2>
+        <p class="sub-note js-count-label">অনুষ্ঠান শুরুর বাকি আছে</p>
+        <div class="countdown">
+          <div class="cd-box"><div class="cd-num js-d">০০</div><div class="cd-lbl">দিন</div></div>
+          <div class="cd-box"><div class="cd-num js-h">০০</div><div class="cd-lbl">ঘণ্টা</div></div>
+          <div class="cd-box"><div class="cd-num js-m">০০</div><div class="cd-lbl">মিনিট</div></div>
+          <div class="cd-box"><div class="cd-num js-s">০০</div><div class="cd-lbl">সেকেন্ড</div></div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <h2>আমন্ত্রণ কার্ড</h2>
+        <div class="invite-card">
+          <div class="ic-orn">✦ ✦ ✦</div>
+          <div class="ic-kicker">Wedding Invitation</div>
+          <div class="ic-names js-ic-names">বর & কনে</div>
+          <div class="ic-event js-ic-event">অনুষ্ঠান</div>
+          <div class="ic-line js-ic-line">—</div>
+          <div class="ic-block ic-info">
+            <div>
+              <div class="ic-label">DATE</div>
+              <div class="ic-value js-ic-date">—</div>
+            </div>
+            <div style="margin-top:.5rem">
+              <div class="ic-label">TIME</div>
+              <div class="ic-value js-ic-time">—</div>
+            </div>
+            <div style="margin-top:.5rem">
+              <div class="ic-label">VENUE</div>
+              <div class="ic-value js-ic-venue">—</div>
+            </div>
+          </div>
+          <div class="ic-orn">✦ ✦ ✦</div>
+        </div>
+        <div style="text-align:center">
+          <button class="btn js-download">🖼️ কার্ড ছবি ডাউনলোড</button>
+        </div>
+        <div class="qr-wrap">
+          <a class="js-qr-link"><img class="qr js-qr" alt="QR"></a>
+          <div class="qr-note">📍 স্ক্যান করে লোকেশনদেখুন</div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <h2>গ্যালারি</h2>
+        <p class="sub-note">আপনার নিজের ছবি এই জায়গায় বসবে (config.js থেকে)।</p>
+        <div class="gallery js-gallery"></div>
+      </section>
+    </main>
+
+    <footer class="footer">সস্নেহে আমন্ত্রণ · <span class="js-f-groom">বর</span> <span class="heart">♥</span> <span class="js-f-bride">কনে</span></footer>
+  </section>
+
+  <!-- ═══════════════════ VIEW: বিবাহ ═══════════════════ -->
+  <section id="biye" class="view" data-event="biye" data-theme="royal-red">
+
+    <a class="btn-back" href="#home">← মূল পাতা</a>
+    <div class="floating-deco" aria-hidden="true"></div>
+
+    <header class="hero">
+      <div class="theme-icon"><img class="js-icon" src="images/kalash-icon.png" alt=""></div>
+      <div class="hero-kicker">শুভ মাঙ্গলিক অনুষ্ঠান</div>
+      <h1 class="ev-title js-title-bn">বিবাহ অনুষ্ঠান</h1>
+      <div class="en js-title-en">WEDDING CEREMONY</div>
+      <div class="hero-line js-line">মাঙ্গলিক শুভ বিবাহ</div>
+      <div class="hero-names">
+        <span class="js-groom">বর</span>
+        <span class="heartbeat">❤</span>
+        <span class="js-bride">কনে</span>
+      </div>
+      <a class="btn btn-soft hero-cta" href="#details-biye">বিস্তারিত দেখুন</a>
+    </header>
+
+    <main>
+      <section id="details-biye" class="section">
+        <div class="card details-card reveal">
+          <div class="detail">
+            <span class="label">DATE</span>
+            <span class="value js-date">—</span>
+            <span class="value sub js-date-en">—</span>
+          </div>
+          <div class="detail">
+            <span class="label">TIME</span>
+            <span class="value js-time">—</span>
+          </div>
+          <div class="detail">
+            <span class="label">VENUE</span>
+            <span class="value js-venue">—</span>
+            <span class="value sub js-venue2">—</span>
+          </div>
+          <a class="btn js-map" href="#" target="_blank" rel="noopener">📍 Google Maps</a>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="map-card">
+          <iframe
+            src="https://www.google.com/maps?q=24.173839,87.906956&z=15&output=embed"
+            width="100%" height="300"
+            style="border:0;border-radius:12px"
+            allowfullscreen
+            loading="lazy"
+            title="Location map"></iframe>
+          <a class="btn btn-map-open js-map-open" href="#" target="_blank" rel="noopener">📍 View on Google Maps</a>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>শুভ মুহূর্তের গণনা</h2>
+        <p class="sub-note js-count-label">অনুষ্ঠান শুরুর বাকি আছে</p>
+        <div class="countdown">
+          <div class="cd-box"><div class="cd-num js-d">০০</div><div class="cd-lbl">দিন</div></div>
+          <div class="cd-box"><div class="cd-num js-h">০০</div><div class="cd-lbl">ঘণ্টা</div></div>
+          <div class="cd-box"><div class="cd-num js-m">০০</div><div class="cd-lbl">মিনিট</div></div>
+          <div class="cd-box"><div class="cd-num js-s">০০</div><div class="cd-lbl">সেকেন্ড</div></div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <h2>আমন্ত্রণ কার্ড</h2>
+        <div class="invite-card">
+          <div class="ic-orn">✦ ✦ ✦</div>
+          <div class="ic-kicker">Wedding Invitation</div>
+          <div class="ic-names js-ic-names">বর & কনে</div>
+          <div class="ic-event js-ic-event">অনুষ্ঠান</div>
+          <div class="ic-line js-ic-line">—</div>
+          <div class="ic-block ic-info">
+            <div>
+              <div class="ic-label">DATE</div>
+              <div class="ic-value js-ic-date">—</div>
+            </div>
+            <div style="margin-top:.5rem">
+              <div class="ic-label">TIME</div>
+              <div class="ic-value js-ic-time">—</div>
+            </div>
+            <div style="margin-top:.5rem">
+              <div class="ic-label">VENUE</div>
+              <div class="ic-value js-ic-venue">—</div>
+            </div>
+          </div>
+          <div class="ic-orn">✦ ✦ ✦</div>
+        </div>
+        <div style="text-align:center">
+          <button class="btn js-download">🖼️ কার্ড ছবি ডাউনলোড</button>
+        </div>
+        <div class="qr-wrap">
+          <a class="js-qr-link"><img class="qr js-qr" alt="QR"></a>
+          <div class="qr-note">📍 স্ক্যান করে লোকেশনদেখুন</div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <h2>গ্যালারি</h2>
+        <p class="sub-note">আপনার নিজের ছবি এই জায়গায় বসবে (config.js থেকে)।</p>
+        <div class="gallery js-gallery"></div>
+      </section>
+    </main>
+
+    <footer class="footer">সস্নেহে আমন্ত্রণ · <span class="js-f-groom">বর</span> <span class="heart">♥</span> <span class="js-f-bride">কনে</span></footer>
+  </section>
+
+  <!-- ═══════════════════ VIEW: বৌভাত / রিসেপশন ═══════════════════ -->
+  <section id="bojhat" class="view" data-event="bojhat" data-theme="emerald-gold">
+
+    <a class="btn-back" href="#home">← মূল পাতা</a>
+    <div class="floating-deco" aria-hidden="true"></div>
+
+    <header class="hero">
+      <div class="theme-icon"><img class="js-icon" src="images/ring-icon.png" alt=""></div>
+      <div class="hero-kicker">শুভ অভ্যর্থনা</div>
+      <h1 class="ev-title js-title-bn">বৌভাত / রিসেপশন</h1>
+      <div class="en js-title-en">BOUBHAT · RECEPTION</div>
+      <div class="hero-line js-line">মধুর সম্মানে সাদর অভ্যর্থনা</div>
+      <div class="hero-names">
+        <span class="js-groom">বর</span>
+        <span class="heartbeat">❤</span>
+        <span class="js-bride">কনে</span>
+      </div>
+      <a class="btn btn-soft hero-cta" href="#details-bojhat">বিস্তারিত দেখুন</a>
+    </header>
+
+    <main>
+      <section id="details-bojhat" class="section">
+        <div class="card details-card reveal">
+          <div class="detail">
+            <span class="label">DATE</span>
+            <span class="value js-date">—</span>
+            <span class="value sub js-date-en">—</span>
+          </div>
+          <div class="detail">
+            <span class="label">TIME</span>
+            <span class="value js-time">—</span>
+          </div>
+          <div class="detail">
+            <span class="label">VENUE</span>
+            <span class="value js-venue">—</span>
+            <span class="value sub js-venue2">—</span>
+          </div>
+          <a class="btn js-map" href="#" target="_blank" rel="noopener">📍 Google Maps</a>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="map-card">
+          <iframe
+            src="https://www.google.com/maps?q=24.173839,87.906956&z=15&output=embed"
+            width="100%" height="300"
+            style="border:0;border-radius:12px"
+            allowfullscreen
+            loading="lazy"
+            title="Location map"></iframe>
+          <a class="btn btn-map-open js-map-open" href="#" target="_blank" rel="noopener">📍 View on Google Maps</a>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>শুভ মুহূর্তের গণনা</h2>
+        <p class="sub-note js-count-label">অনুষ্ঠান শুরুর বাকি আছে</p>
+        <div class="countdown">
+          <div class="cd-box"><div class="cd-num js-d">০০</div><div class="cd-lbl">দিন</div></div>
+          <div class="cd-box"><div class="cd-num js-h">০০</div><div class="cd-lbl">ঘণ্টা</div></div>
+          <div class="cd-box"><div class="cd-num js-m">০০</div><div class="cd-lbl">মিনিট</div></div>
+          <div class="cd-box"><div class="cd-num js-s">০০</div><div class="cd-lbl">সেকেন্ড</div></div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <h2>আমন্ত্রণ কার্ড</h2>
+        <div class="invite-card">
+          <div class="ic-orn">✦ ✦ ✦</div>
+          <div class="ic-kicker">Wedding Invitation</div>
+          <div class="ic-names js-ic-names">বর & কনে</div>
+          <div class="ic-event js-ic-event">অনুষ্ঠান</div>
+          <div class="ic-line js-ic-line">—</div>
+          <div class="ic-block ic-info">
+            <div>
+              <div class="ic-label">DATE</div>
+              <div class="ic-value js-ic-date">—</div>
+            </div>
+            <div style="margin-top:.5rem">
+              <div class="ic-label">TIME</div>
+              <div class="ic-value js-ic-time">—</div>
+            </div>
+            <div style="margin-top:.5rem">
+              <div class="ic-label">VENUE</div>
+              <div class="ic-value js-ic-venue">—</div>
+            </div>
+          </div>
+          <div class="ic-orn">✦ ✦ ✦</div>
+        </div>
+        <div style="text-align:center">
+          <button class="btn js-download">🖼️ কার্ড ছবি ডাউনলোড</button>
+        </div>
+        <div class="qr-wrap">
+          <a class="js-qr-link"><img class="qr js-qr" alt="QR"></a>
+          <div class="qr-note">📍 স্ক্যান করে লোকেশনদেখুন</div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <h2>গ্যালারি</h2>
+        <p class="sub-note">আপনার নিজের ছবি এই জায়গায় বসবে (config.js থেকে)।</p>
+        <div class="gallery js-gallery"></div>
+      </section>
+    </main>
+
+    <footer class="footer">সস্নেহে আমন্ত্রণ · <span class="js-f-groom">বর</span> <span class="heart">♥</span> <span class="js-f-bride">কনে</span></footer>
+  </section>
+
+  <!-- ── shared lightbox (one for the whole app) ── -->
+  <div class="lightbox">
+    <button class="lb-close" aria-label="বন্ধ">✕</button>
+    <button class="lb-nav lb-prev" aria-label="আগে">‹</button>
+    <img class="lb-img" alt="">
+    <button class="lb-nav lb-next" aria-label="পরে">›</button>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

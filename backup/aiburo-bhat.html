@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>আইবুড়ো ভাত</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700;900&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="themes.css">
+  <link rel="preload" as="audio" type="audio/mpeg" href="images/shehnai.mp3">
+</head>
+<body data-event="aiburoBhat" data-theme="warm-yellow">
+
+  <a class="btn-back" href="index.html" data-nav>← মূল পাতা</a>
+  <button class="music-toggle js-music" aria-label="মিউজিক">♪</button>
+  <div class="floating-deco" aria-hidden="true"></div>
+
+  <!-- ══════════════════ HERO ══════════════════ -->
+  <header class="hero">
+    <div class="theme-icon"><img class="js-icon" src="images/aiburo-icon.png" alt=""></div>
+    <div class="hero-kicker">শুভ অনুষ্ঠান</div>
+    <h1 class="ev-title js-title-bn">আইবুড়ো ভাত</h1>
+    <div class="en js-title-en">AIBURO BHAT</div>
+    <div class="hero-line js-line">মিষ্টি মুখের শুভ উদযাপন</div>
+    <div class="hero-names">
+      <span class="js-groom">বর</span>
+      <span class="heartbeat">❤</span>
+      <span class="js-bride">কনে</span>
+    </div>
+    <a class="btn btn-soft hero-cta" href="#details">বিস্তারিত দেখুন</a>
+  </header>
+
+  <main>
+
+    <!-- ── Date / Time / Venue card ── -->
+    <section id="details" class="section">
+      <div class="card details-card reveal">
+        <div class="detail">
+          <span class="label">DATE</span>
+          <span class="value js-date">—</span>
+        </div>
+        <div class="detail">
+          <span class="label">TIME</span>
+          <span class="value js-time">—</span>
+        </div>
+        <div class="detail">
+          <span class="label">VENUE</span>
+          <span class="value js-venue">—</span>
+          <span class="value sub js-venue2">—</span>
+        </div>
+        <a class="btn js-map" href="#" target="_blank" rel="noopener">📍 Google Maps</a>
+      </div>
+    </section>
+
+    <!-- ── Countdown ── -->
+    <section class="section">
+      <h2>শুভ মুহূর্তের গণনা</h2>
+      <p class="sub-note js-count-label">অনুষ্ঠান শুরুর বাকি আছে</p>
+      <div class="countdown">
+        <div class="cd-box"><div class="cd-num js-d">০০</div><div class="cd-lbl">দিন</div></div>
+        <div class="cd-box"><div class="cd-num js-h">০০</div><div class="cd-lbl">ঘণ্টা</div></div>
+        <div class="cd-box"><div class="cd-num js-m">০০</div><div class="cd-lbl">মিনিট</div></div>
+        <div class="cd-box"><div class="cd-num js-s">০০</div><div class="cd-lbl">সেকেন্ড</div></div>
+      </div>
+    </section>
+
+    <!-- ── Downloadable Invite Card + QR ── -->
+    <section class="section reveal">
+      <h2>আমন্ত্রণ কার্ড</h2>
+      <div class="invite-card" id="inviteCard">
+        <div class="ic-orn">✿ ✿ ✿</div>
+        <div class="ic-kicker">Wedding Invitation</div>
+        <div class="ic-names js-ic-names">বর & কনে</div>
+        <div class="ic-event js-ic-event">অনুষ্ঠান</div>
+        <div class="ic-line js-ic-line">—</div>
+        <div class="ic-block ic-info">
+          <div>
+            <div class="ic-label">DATE</div>
+            <div class="ic-value js-ic-date">—</div>
+          </div>
+          <div style="margin-top:.5rem">
+            <div class="ic-label">TIME</div>
+            <div class="ic-value js-ic-time">—</div>
+          </div>
+          <div style="margin-top:.5rem">
+            <div class="ic-label">VENUE</div>
+            <div class="ic-value js-ic-venue">—</div>
+          </div>
+        </div>
+        <div class="ic-orn">✿ ✿ ✿</div>
+      </div>
+      <div style="text-align:center">
+        <button class="btn js-download">🖼️ কার্ড ছবি ডাউনলোড</button>
+      </div>
+      <div class="qr-wrap">
+        <a class="js-qr-link"><img class="qr js-qr" alt="QR"></a>
+        <div class="qr-note">ক্যামেরা দিয়ে স্ক্যান করে লোকেশন খুলুন</div>
+      </div>
+    </section>
+
+    <!-- ── Photo Gallery ── -->
+    <section class="section reveal">
+      <h2>গ্যালারি</h2>
+      <p class="sub-note">আপনার নিজের ছবি এই জায়গায় বসবে (config.js থেকে)।</p>
+      <div class="gallery js-gallery"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer">সস্নেহে আমন্ত্রণ · <span class="js-f-groom">বর</span> <span class="heart">♥</span> <span class="js-f-bride">কনে</span></footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox">
+    <button class="lb-close" aria-label="বন্ধ">✕</button>
+    <button class="lb-nav lb-prev" aria-label="আগে">‹</button>
+    <img class="lb-img" alt="">
+    <button class="lb-nav lb-next" aria-label="পরে">›</button>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

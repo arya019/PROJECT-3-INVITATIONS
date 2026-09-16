@@ -1,0 +1,172 @@
+/* ============================================================
+   themes.css  —  Four event themes, each a set of CSS variables.
+   ------------------------------------------------------------
+   Each event page has <body data-theme="..."> and the
+   matching block below colors the whole page. The home page is
+   theme-home. No other CSS file needs theme colors.
+   ============================================================ */
+
+/* ---------- shared defaults (fallback, then overridden) ---------- */
+:root {
+  --font-bn: 'Hind Siliguri', sans-serif;
+  --font-bn-serif: 'Noto Serif Bengali', serif;
+  --font-en: 'Playfair Display', serif;
+  /* ---- per-theme hero glow (applied in style.css to .ev-title,
+         .hero .en, .hero-names and .theme-icon on event pages) ---- */
+  --title-glow:       none;   /* text-shadow for the event title */
+  --title-glow-bright: none;  /* 50% pulse peak for the title */
+  --subtitle-glow:    none;   /* text-shadow for the english subtitle */
+  --names-glow:       none;   /* text-shadow for "বর ❤ কনে" */
+  --names-glow-bright: none;  /* 50% pulse peak for the names */
+  --icon-glow:        none;   /* filter drop-shadow for the theme icon */
+}
+
+/* ==========================================================
+   THEME 1 · আইবুড়ো ভাত ·  "warm-yellow"
+   deep warm brown + gold text & glow (matches the dark-card set)
+   ========================================================== */
+body[data-theme="warm-yellow"] {
+  --bg: #5a2a1a;               /* deep warm brown */
+  --bg2: #3d1a0f;              /* darker brown for gradient */
+  --ink: #f4d47c;              /* warm gold text */
+  --ink-soft: #e8c98f;         /* soft cream-gold */
+  --accent: #f4d47c;           /* gold */
+  --accent2: #d4a44a;          /* darker gold */
+  --card-bg: #4a2214;          /* slightly lighter brown for inner panels */
+  --border: #c9a227;           /* gold border */
+  --glow: rgba(244, 212, 124, .5);
+  --hero-1: #5a2a1a;
+  --hero-2: #3d1a0f;
+  --cta-bg: #c9a227;           /* gold button */
+  --cta-text: #3d1a0f;         /* dark brown on gold button */
+  --frame-color: #c9a227;      /* gold border frame */
+  --head-font: var(--font-bn);
+  --deco-color-1: #d4a44a;
+  --deco-color-2: #c9a227;
+  /* hero glow — gold on dark brown (matches Bojhat style) */
+  --title-glow:       0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5);
+  --title-glow-bright:0 0 16px rgba(244,212,124,1), 0 0 32px rgba(244,212,124,0.7);
+  --subtitle-glow:    0 0 8px rgba(232,201,143,0.6);
+  --names-glow:       0 0 14px rgba(244,212,124,1), 0 0 28px rgba(244,212,124,0.6);
+  --names-glow-bright:0 0 18px rgba(244,212,124,1), 0 0 36px rgba(244,212,124,0.8);
+  --icon-glow:        drop-shadow(0 0 12px rgba(244,212,124,0.85));
+}
+
+/* ==========================================================
+   THEME 2 · গায়ে হলুদ ·  "marigold"
+   bright marigold gradient + red-orange text
+   ========================================================== */
+body[data-theme="marigold"] {
+  --bg: #ffe563;
+  --bg2: #ffb524;
+  --ink: #a32020;               /* red-orange text */
+  --ink-soft: #c0392b;
+  --accent: #e74c1a;
+  --accent2: #ff8b1f;
+  --card-bg: #fff7d1;
+  --border: #f0a41b;
+  --glow: rgba(255, 139, 31, .5);
+  --hero-1: #ffe563;
+  --hero-2: #ffab1f;
+  --cta-bg: #d35400;
+  --cta-text: #fff6d8;
+  --frame-color: transparent;
+  --head-font: var(--font-bn-serif);
+  --deco-color-1: #ff7b1c;
+  --deco-color-2: #e74c1a;
+  /* hero glow — ORANGE-RED, because gold is invisible on marigold */
+  --title-glow:       0 0 12px rgba(179,71,0,0.7), 0 0 24px rgba(255,200,60,0.6), 0 0 40px rgba(255,200,60,0.3);
+  --title-glow-bright:0 0 18px rgba(179,71,0,0.85), 0 0 36px rgba(255,200,60,0.8), 0 0 50px rgba(255,200,60,0.35);
+  --subtitle-glow:    0 0 10px rgba(122,31,15,0.5);
+  --names-glow:       0 0 14px rgba(179,71,0,0.8), 0 0 28px rgba(255,200,60,0.5);
+  --names-glow-bright:0 0 18px rgba(179,71,0,0.9), 0 0 36px rgba(255,200,60,0.7);
+  --icon-glow:        drop-shadow(0 0 14px rgba(255,200,60,0.9));
+}
+
+/* ==========================================================
+   THEME 3 · বিবাহ অনুষ্ঠান ·  "royal-red"
+   cream + dark-red border frame + deep maroon & gold
+   (most formal)
+   ========================================================== */
+body[data-theme="royal-red"] {
+  --bg: #8b1a1a;             /* DEEP maroon red — the whole page */
+  --bg2: #6b0f0f;            /* darker red for the gradient */
+  --ink: #f4d47c;            /* gold text on dark */
+  --ink-soft: #fde8c8;       /* soft cream */
+  --accent: #e6c25a;         /* gold */
+  --accent2: #f6e7a1;
+  --card-bg: #a52a2a;
+  --border: #d9a441;
+  --glow: rgba(230, 194, 90, .5);
+  --hero-1: #8b1a1a;
+  --hero-2: #5f0d0d;
+  --cta-bg: #f4d47c;
+  --cta-text: #7a1f1f;
+  --frame-color: #f4d47c;     /* gold border frame on the deep red */
+  --head-font: var(--font-bn-serif);
+  --deco-color-1: #e6c25a;
+  --deco-color-2: #f4d47c;
+  /* hero glow — gold, royal, like the biye landing card */
+  --title-glow:       0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5), 0 0 45px rgba(244,212,124,0.25);
+  --title-glow-bright:0 0 18px rgba(244,212,124,1), 0 0 36px rgba(244,212,124,0.7), 0 0 55px rgba(244,212,124,0.35);
+  --subtitle-glow:    0 0 10px rgba(253,232,200,0.7);
+  --names-glow:       0 0 14px rgba(244,212,124,1), 0 0 28px rgba(244,212,124,0.6);
+  --names-glow-bright:0 0 18px rgba(244,212,124,1), 0 0 36px rgba(244,212,124,0.8);
+  --icon-glow:        drop-shadow(0 0 14px rgba(244,212,124,0.85));
+}
+
+/* ==========================================================
+   THEME 4 · বৌভাত / রিসেপশন ·  "emerald-gold"
+   dark emerald bg + gold text & ornaments + bokeh
+   (rich, celebratory)
+   ========================================================== */
+body[data-theme="emerald-gold"] {
+  --bg: #0a3d2e;
+  --bg2: #052b20;
+  --ink: #f2d57e;               /* gold text on dark */
+  --ink-soft: #d9b45c;
+  --accent: #e6c25a;
+  --accent2: #f6e7a1;
+  --card-bg: #0f4a38;
+  --border: #e6c25a;
+  --glow: rgba(230, 194, 90, .35);
+  --hero-1: #0c4433;
+  --hero-2: #04261c;
+  --cta-bg: #e6c25a;
+  --cta-text: #0a3d2e;
+  --frame-color: transparent;
+  --head-font: var(--font-bn-serif);
+  --deco-color-1: #e6c25a;
+  --deco-color-2: #f6e7a1;
+  /* hero glow — the reference gold glow */
+  --title-glow:       0 0 12px rgba(244,212,124,0.9), 0 0 24px rgba(244,212,124,0.5);
+  --title-glow-bright:0 0 16px rgba(244,212,124,1), 0 0 32px rgba(244,212,124,0.7);
+  --subtitle-glow:    0 0 8px rgba(232,217,168,0.7);
+  --names-glow:       0 0 14px rgba(244,212,124,1), 0 0 28px rgba(244,212,124,0.6);
+  --names-glow-bright:0 0 18px rgba(244,212,124,1), 0 0 36px rgba(244,212,124,0.8);
+  --icon-glow:        drop-shadow(0 0 12px rgba(244,212,124,0.85));
+}
+
+/* ==========================================================
+   HOME (index.html) · theme-home
+   romantic, neutral, warm
+   ========================================================== */
+body[data-theme="home"] {
+  --bg: #fdf6ec;
+  --bg2: #f3ddc0;
+  --ink: #6d2a2a;
+  --ink-soft: #8a4a3a;
+  --accent: #b94a4a;
+  --accent2: #d9a441;
+  --card-bg: #fffdf6;
+  --border: #d9b88a;
+  --glow: rgba(217, 164, 65, .45);
+  --hero-1: #fdf0da;
+  --hero-2: #f5ddbc;
+  --cta-bg: #b94a4a;
+  --cta-text: #fff7ea;
+  --frame-color: transparent;
+  --head-font: var(--font-bn-serif);
+  --deco-color-1: #d9806b;
+  --deco-color-2: #e6c25a;
+}
