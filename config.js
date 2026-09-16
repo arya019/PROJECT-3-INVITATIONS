@@ -1,47 +1,71 @@
 /* ============================================================
    config.js  —  ALL editable data lives in this ONE file.
    ------------------------------------------------------------
-   Change names, dates, times, venues, and photos here.
-   No need to touch any other file.
+   This is the single source of truth for the wedding site.
+   Change names, dates, times, venue, map link and photos here —
+   every page reads from this file. No need to touch any other file.
    ============================================================ */
 
 const WEDDING = {
 
-  /* ── 1. COUPLE NAMES ───────────────────────────────────── */
-  groom: "রৌনক",
-  bride: "কাকলি",
+  /* ══ 1. COUPLE NAMES (Bengali + English) ════════════════════ */
+  groom:     "রৌনক",          // গৃহি Bengali
+  bride:     "কাকলী",         // বধূ Bengali
+  groomEn:   "Rounak",        // groom English spelling: R-O-U-N-A-K
+  brideEn:   "Kakoli",        // bride English spelling
 
-  /* Short emotional line shown under the names on the home page */
+  /* Short emotional salutation on the landing hero */
   greetingBn: "সানন্দে জানানো যাচ্ছে যে, আমাদের পরম আদরের",
 
-  /* ── 2. BACKGROUND MUSIC ──────────────────────────────── */
-  /* Path to the audio file (a ~27-second shehnai tune that loops). */
+  /* ══ 2. THE VENUE / LOCATION (same for all 4 events) ═══════ */
+  /* Google Maps short link, exact coordinates, and the address in
+     Bengali + English. Used for the map, QR codes and "view on map". */
+  location: {
+    address:    "নিজ বাসভবন, কয়েম্বা, বীরভূম - ৭৩১২৪১",   // Bengali address
+    addressEn:  "Kayemba, West Bengal 731241",              // English address
+    coords:     { lat: 24.173839, lng: 87.906956 },         // map centre point
+    mapLink:    "https://maps.app.goo.gl/9DEkysSqcpTWJm2Q6" // short maps link
+  },
+
+  /* ══ 3. BACKGROUND MUSIC ══════════════════════════════════ */
+  /* Path to the looping shehnai tune. */
   musicSrc: "images/shehnai.mp3",
 
-  /* ============================================================
+  /* ═══════════════════════════════════════════════════════════
      THE FOUR EVENTS
-     --------------------------------------------------------
-     • date    = machine date (YYYY-MM-DD)  → used by the countdown
-     • dateBn  = Bengali date shown on the card
-     • photos  = list of image files / URLs shown in the gallery
-     • icon    = small themed icon (see images/ folder)
-     ============================================================ */
+     -----------------------------------------------------------
+     Each event carries every piece of text shown on its section.
+     Fields that matter across files:
+       • dateIso  = full ISO date + time + Asia/Kolkata offset
+                    ("2026-11-23T13:00:00+05:30") → used by the
+                    countdown timer, so it is correct in any timezone.
+       • dateBn   = line 1 of the date card (Bengali calendar date)
+       • dateEn   = line 2 (English date + day), e.g. "(ইং- ২৪/১১/২০২৬) মঙ্গলবার"
+       • time     = line 3 (Bengali time), e.g. "সকাল ১১টা"
+       • venue    = Bengali address · venueDetail = English address
+       • mapLink  = the same Google Maps short link for every event
+       • coords   = map centre for that event
+       • photos   = gallery images
+       • icon     = small themed icon (images/ folder)
+     ═══════════════════════════════════════════════════════════ */
   events: {
 
-    /* ── EVENT 1: আইবুড়ো ভাত ────────────────────────────── */
+    /* ── EVENT 1 · আইবুড়ো ভাত · Aiburo Bhat — 23 Nov, Monday ── */
     aiburoBhat: {
       titleBn: "আইবুড়ো ভাত",
       titleEn: "Aiburo Bhat",
-      date: "2026-11-20",                     // countdown target (edit)
-      dateBn: "২০ নভেম্বর ২০২৬",              // displayed date (edit)
-      time: "সন্ধ্যা ৭:০০",                   // edit
-      venue: "হল অ্যাড্রেস এখানে লিখুন",        // edit
-      venueDetail: "রোড, এলাকা, পিন",          // edit
-      mapLink: "https://maps.google.com/?q=Kolkata",  // edit
-      theme: "warm-yellow",
-      page: "aiburo-bhat.html",
-      icon: "images/aiburo-icon.png",
-      line: "মিষ্টি মুখের শুভ উদযাপন",
+      dateIso: "2026-11-23T13:00:00+05:30",   // countdown target (Asia/Kolkata)
+      dateBn:  "৬ই অগ্রহায়ণ, ১৪৩৩ বঙ্গাব্দ",
+      dateEn:  "(ইং- ২৩/১১/২০২৬) সোমবার",
+      time:    "দুপুর ১টা",
+      venue:   "নিজ বাসভবন, কয়েম্বা, বীরভূম - ৭৩১২৪১",
+      venueDetail: "Kayemba, West Bengal 731241",
+      mapLink: "https://maps.app.goo.gl/9DEkysSqcpTWJm2Q6",
+      coords:  { lat: 24.173839, lng: 87.906956 },
+      theme:   "warm-yellow",
+      page:    "aiburo-bhat.html",
+      icon:    "images/aiburo-icon.png",
+      line:    "মিষ্টি মুখের শুভ উদযাপন",
       photos: [
         "https://picsum.photos/seed/aiburo1/800/600",
         "https://picsum.photos/seed/aiburo2/800/600",
@@ -50,20 +74,22 @@ const WEDDING = {
       ]
     },
 
-    /* ── EVENT 2: গায়ে হলুদ ─────────────────────────────── */
+    /* ── EVENT 2 · গায়ে হলুদ · Gaye Holud — 24 Nov, Tuesday ── */
     gayeHolud: {
       titleBn: "গায়ে হলুদ",
       titleEn: "Gaye Holud",
-      date: "2026-11-21",
-      dateBn: "২১ নভেম্বর ২০২৬",
-      time: "বিকাল ৪:০০",
-      venue: "হল অ্যাড্রেস এখানে লিখুন",
-      venueDetail: "রোড, এলাকা, পিন",
-      mapLink: "https://maps.google.com/?q=Kolkata",
-      theme: "marigold",
-      page: "gaye-holud.html",
-      icon: "images/marigold-icon.png",
-      line: "হলুদের আভায় সেজেছে ঘর",
+      dateIso: "2026-11-24T11:00:00+05:30",
+      dateBn:  "৭ই অগ্রহায়ণ, ১৪৩৩ বঙ্গাব্দ",
+      dateEn:  "(ইং- ২৪/১১/২০২৬) মঙ্গলবার",
+      time:    "সকাল ১১টা",
+      venue:   "নিজ বাসভবন, কয়েম্বা, বীরভূম - ৭৩১২৪১",
+      venueDetail: "Kayemba, West Bengal 731241",
+      mapLink: "https://maps.app.goo.gl/9DEkysSqcpTWJm2Q6",
+      coords:  { lat: 24.173839, lng: 87.906956 },
+      theme:   "marigold",
+      page:    "gaye-holud.html",
+      icon:    "images/marigold-icon.png",
+      line:    "হলুদের আভায় সেজেছে ঘর",
       photos: [
         "https://picsum.photos/seed/holud1/800/600",
         "https://picsum.photos/seed/holud2/800/600",
@@ -72,20 +98,22 @@ const WEDDING = {
       ]
     },
 
-    /* ── EVENT 3: বিবাহ অনুষ্ঠান ─────────────────────────── */
+    /* ── EVENT 3 · বিবাহ অনুষ্ঠান · Biye / Shubho Bibaho — 24 Nov, Tue ── */
     biye: {
       titleBn: "বিবাহ অনুষ্ঠান",
       titleEn: "Wedding Ceremony",
-      date: "2026-11-22",
-      dateBn: "২২ নভেম্বর ২০২৬",
-      time: "সকাল ১০:০০",
-      venue: "হল অ্যাড্রেস এখানে লিখুন",
-      venueDetail: "রোড, এলাকা, পিন",
-      mapLink: "https://maps.google.com/?q=Kolkata",
-      theme: "royal-red",
-      page: "biye.html",
-      icon: "images/kalash-icon.png",
-      line: "মাঙ্গলিক শুভ বিবাহ",
+      dateIso: "2026-11-24T20:00:00+05:30",
+      dateBn:  "৭ই অগ্রহায়ণ, ১৪৩৩ বঙ্গাব্দ",
+      dateEn:  "(ইং- ২৪/১১/২০২৬) মঙ্গলবার",
+      time:    "রাত ৮টা",
+      venue:   "নিজ বাসভবন, কয়েম্বা, বীরভূম - ৭৩১২৪১",
+      venueDetail: "Kayemba, West Bengal 731241",
+      mapLink: "https://maps.app.goo.gl/9DEkysSqcpTWJm2Q6",
+      coords:  { lat: 24.173839, lng: 87.906956 },
+      theme:   "royal-red",
+      page:    "biye.html",
+      icon:    "images/kalash-icon.png",
+      line:    "মাঙ্গলিক শুভ বিবাহ",
       photos: [
         "https://picsum.photos/seed/biye1/800/600",
         "https://picsum.photos/seed/biye2/800/600",
@@ -94,20 +122,22 @@ const WEDDING = {
       ]
     },
 
-    /* ── EVENT 4: বৌভাত / রিসেপশন ───────────────────────── */
+    /* ── EVENT 4 · প্রীতিভোজ / বৌভাত · Pritibhoj / Boubhat — 25 Nov, Wed ── */
     bojhat: {
-      titleBn: "বৌভাত / রিসেপশন",
-      titleEn: "Boubhat & Reception",
-      date: "2026-11-23",
-      dateBn: "২৩ নভেম্বর ২০২৬",
-      time: "রাত ৮:০০",
-      venue: "হল অ্যাড্রেস এখানে লিখুন",
-      venueDetail: "রোড, এলাকা, পিন",
-      mapLink: "https://maps.google.com/?q=Kolkata",
-      theme: "emerald-gold",
-      page: "bojhat.html",
-      icon: "images/ring-icon.png",
-      line: "মধুর সম্মানে সাদর অভ্যর্থনা",
+      titleBn: "প্রীতিভোজ / বৌভাত",
+      titleEn: "Pritibhoj / Boubhat",
+      dateIso: "2026-11-25T20:00:00+05:30",
+      dateBn:  "৮ই অগ্রহায়ণ, ১৪৩৩ বঙ্গাব্দ",
+      dateEn:  "(ইং- ২৫/১১/২০২৬) বুধবার",
+      time:    "রাত ৮টা",
+      venue:   "নিজ বাসভবন, কয়েম্বা, বীরভূম - ৭৩১২৪১",
+      venueDetail: "Kayemba, West Bengal 731241",
+      mapLink: "https://maps.app.goo.gl/9DEkysSqcpTWJm2Q6",
+      coords:  { lat: 24.173839, lng: 87.906956 },
+      theme:   "emerald-gold",
+      page:    "bojhat.html",
+      icon:    "images/ring-icon.png",
+      line:    "মধুর সম্মানে সাদর অভ্যর্থনা",
       photos: [
         "https://picsum.photos/seed/bojhat1/800/600",
         "https://picsum.photos/seed/bojhat2/800/600",

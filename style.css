@@ -936,3 +936,123 @@ body[data-theme="royal-red"]::before {
 @media (max-width: 380px) {
   .event-grid { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   MAP CARD  —  embedded Google Maps iframe + "View on Maps" btn
+   ============================================================ */
+.map-card {
+  background: var(--card, #fffdf6);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  text-align: center;
+}
+.map-card iframe {
+  border-radius: 12px;
+  margin-bottom: .8rem;
+}
+.btn-map-open {
+  display: inline-block;
+  margin-top: .4rem;
+  padding: .55rem 1.4rem;
+  border: 2px solid var(--accent, #c9a227);
+  border-radius: 30px;
+  background: var(--card, #fffdf6);
+  color: var(--accent, #c9a227);
+  font-weight: 600;
+  font-size: .95rem;
+  text-decoration: none;
+  transition: background .25s, color .25s, transform .2s;
+}
+.btn-map-open:hover,
+.btn-map-open:active {
+  background: var(--accent, #c9a227);
+  color: #fff;
+  transform: scale(1.04);
+}
+
+/* ============================================================
+   SAVE THE DATE CARD  —  landing section below the event grid
+   ============================================================ */
+.save-date-section {
+  padding: 2.5rem 1rem;
+}
+.save-date-card {
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--card, #fffdf6);
+  border: 2px solid var(--accent, #c9a227);
+  border-radius: 20px;
+  padding: 2rem 1.6rem;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08);
+}
+.sd-orn {
+  letter-spacing: .5em;
+  color: var(--accent, #c9a227);
+  font-size: 1.1rem;
+  margin-bottom: .6rem;
+}
+.sd-kicker {
+  font-family: var(--font-en);
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  color: var(--ink-soft, #777);
+  margin-bottom: .6rem;
+}
+.sd-names {
+  font-family: var(--font-bn);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent, #c9a227);
+  margin-bottom: .4rem;
+}
+.sd-names .heart { font-size: 1.2rem; }
+.sd-dates {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: .3rem;
+}
+.sd-events {
+  font-size: .95rem;
+  color: var(--ink-soft, #777);
+  margin-bottom: 1.2rem;
+}
+.btn-cal {
+  display: inline-block;
+  margin-bottom: 1.2rem;
+  padding: .55rem 1.6rem;
+  border: 2px solid var(--accent, #c9a227);
+  border-radius: 30px;
+  background: var(--card, #fffdf6);
+  color: var(--accent, #c9a227);
+  font-weight: 600;
+  font-size: .95rem;
+  cursor: pointer;
+  transition: background .25s, color .25s, transform .2s;
+}
+.btn-cal:hover,
+.btn-cal:active {
+  background: var(--accent, #c9a227);
+  color: #fff;
+  transform: scale(1.04);
+}
+.sd-map {
+  display: block;
+  margin-top: .4rem;
+  text-decoration: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.sd-map iframe {
+  pointer-events: none;
+  border-radius: 12px;
+}
+.sd-map-hint {
+  display: inline-block;
+  margin-top: .4rem;
+  color: var(--accent, #c9a227);
+  font-size: .85rem;
+  font-weight: 600;
+}

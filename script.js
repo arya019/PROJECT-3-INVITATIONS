@@ -308,13 +308,14 @@ function fillEvent(root) {
 
   // details card (date / time / venue)
   text($(".js-date", root), ev.dateBn);
+  text($(".js-date-en", root), ev.dateEn);
   text($(".js-time", root), ev.time);
   text($(".js-venue", root), ev.venue);
   text($(".js-venue2", root), ev.venueDetail);
   const mapBtn = $(".js-map", root); if (mapBtn) mapBtn.href = ev.mapLink;
 
-  // countdown target comes from config's machine date
-  startCountdown(root, ev.date);
+  // countdown target — full ISO+offset so the timer is correct in every timezone
+  startCountdown(root, ev.dateIso);
 
   // invite card (downloaded as an image) — scoped to this view
   const card = $(".invite-card", root);
@@ -333,6 +334,10 @@ function fillEvent(root) {
   const qrLink = $(".js-qr-link", root);
   if (qr) qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(ev.mapLink)}`;
   if (qrLink) { qrLink.href = ev.mapLink; qrLink.target = "_blank"; }
+
+  // "View on Google Maps" button in the map embed
+  const mapOpen = $(".js-map-open", root);
+  if (mapOpen) { mapOpen.href = ev.mapLink; }
 
   // gallery from config.photos
   buildGallery($(".js-gallery", root), ev.photos || []);
@@ -389,7 +394,7 @@ function startCountdown(root, isoDate) {
     d: $(".js-d", root), h: $(".js-h", root), m: $(".js-m", root), s: $(".js-s", root)
   };
   const pastLabel = $(".js-count-label", root);
-  const target = new Date(isoDate + "T00:00:00").getTime();
+  const target = new Date(isoDate).getTime();
   if (isNaN(target)) return;
 
   function tick() {
@@ -535,6 +540,73 @@ function serializeHTML(holder) {
 }
 
 /* ============================================================
+   11. SAVE-THE-DATE — fills the landing Save the Date card
+       and wires the Add-to-Calendar button.
+   ============================================================ */
+function initSaveDate() {
+  // fill names in the Save the Date card
+  text($(".js-sd-groom"), W.groom);
+  text($(".js-sd-bride"), W.bride);
+
+  // wire the Add-to-Calendar button
+  const btn = $(".js-add-calendar");
+  if (btn) btn.addEventListener("click", addToCalendar);
+}
+
+/* ============================================================
+   12. ADD TO CALENDAR — generates a .ics file for all 4 events.
+       Uses Asia/Kolkata (+05:30) fixed offset.
+   ============================================================ */
+function addToCalendar() {
+  if (!W.events) return;
+  const pad = n => String(n).padStart(2, "0");
+  const order = ["aiburoBhat", "gayeHolud", "biye", "bojhat"];
+
+  /* format a Date → ICS basic datetime with +0530 offset */
+  function icsDt(d) {
+    return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate())
+         + "T" + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds());
+  }
+
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//PrajaWedding//INVITATION//",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    `X-WR-CALNAME:${W.groomEn || W.groom} ♥ ${W.brideEn || W.bride} — Wedding`
+  ];
+
+  order.forEach(key => {
+    const ev = W.events[key];
+    if (!ev) return;
+    const start = new Date(ev.dateIso);
+    const end   = new Date(start.getTime() + 2 * 3600 * 1000);   // +2 hours
+    lines.push(
+      "BEGIN:VEVENT",
+      `DTSTART;TZID=Asia/Kolkata:${icsDt(start)}`,
+      `DTEND;TZID=Asia/Kolkata:${icsDt(end)}`,
+      `SUMMARY:${ev.titleBn} — ${W.groom} ও ${W.bride}`,
+      `LOCATION:${W.location ? W.location.address : ev.venue}`,
+      `DESCRIPTION:${ev.titleEn}`,
+      "END:VEVENT"
+    );
+  });
+
+  lines.push("END:VCALENDAR");
+
+  const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url;
+  a.download = "wedding-events.ics";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+}
+
+/* ============================================================
    BOOT
    ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
@@ -546,4 +618,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initMusic();           // single-audio mute toggle
   initEventPages();      // fill each event view from config.js
   initHomeCards();       // fill landing names + event cards from config.js
+  initSaveDate();        // fill Save-the-Date card + wire calendar button
 });
