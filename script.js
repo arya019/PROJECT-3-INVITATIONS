@@ -203,12 +203,19 @@ function initNav() {
 /* ============================================================
    5. ENVELOPE  (landing view)
    The SAME click that opens the envelope also starts the music.
+   It also fires the video's happy jump + nudges video playback
+   (a real user gesture — helps Android Chrome start the video
+   inline instead of waiting).
    ============================================================ */
 function initEnvelope() {
   const env = $("#envelope");
   if (!env) return;
   env.addEventListener("click", () => {
     env.classList.add("open");
+    const vw = $(".video-polaroid");
+    if (vw) { vw.classList.remove("jump"); void vw.offsetWidth; vw.classList.add("jump"); }
+    const v = $(".couple-video");
+    if (v) { try { const p = v.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
     startMusicOnEnvelope();
     // let the full sequence play: flap opens (0.7s) → card slides out
     // & settles (→2.0s), then fade the whole overlay away to reveal the page.
@@ -217,6 +224,33 @@ function initEnvelope() {
       if (ov) ov.classList.add("gone");
     }, 3000);
   });
+}
+
+/* ============================================================
+   5b. COUPLE VIDEO  (landing view only)
+   • muted + playsinline are set in markup so Android/iOS play inline.
+   • kick playback on load (muted autoplay is allowed everywhere).
+   • on ANY load error, swap to the PNG cartoon fallback.
+   ============================================================ */
+function initCoupleVideo() {
+  const v = $(".couple-video");
+  if (!v) return;
+  const showFallback = () => {
+    const fb = $(".couple-fallback");
+    if (fb) fb.style.display = "block";
+    v.style.display = "none";
+  };
+  v.addEventListener("error", showFallback);
+  try {
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) {}
+  // belt-and-suspenders: if the source 404s after metadata was
+  // expected, the error event above already fired; also check state
+  // shortly after boot in case the error was swallowed.
+  setTimeout(() => {
+    if (v.readyState === 0 && v.networkState === 3) showFallback();
+  }, 3000);
 }
 
 /* ============================================================
@@ -737,6 +771,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initReveal();          // fade-in on scroll
   initNav();             // SPA hash routing
   initEnvelope();        // landing envelope (+ first music gesture)
+  initCoupleVideo();     // landing video autoplay + PNG fallback
   initMusic();           // single-audio mute toggle
   initEventPages();      // fill each event view from config.js
   initHomeCards();       // fill landing names + event cards from config.js

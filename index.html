@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="themes.css">
   <link rel="preload" as="audio" type="audio/mpeg" href="images/shehnai.mp3">
+  <link rel="preload" as="video" type="video/mp4" href="images/couple-animation.mp4">
 
   <!-- ═════════════ SPA MODEL ═════════════
        This is a SINGLE-PAGE app. All five "pages" live in this one
@@ -52,22 +53,23 @@
          ══════════════════════════════════════════════════════════════════ -->
     <div class="envelope-overlay">
 
-      <!-- cartoon couple — standing / peeking above the envelope -->
-      <div class="cartoon-wrap" aria-hidden="true">
-        <span class="cartoon-glow"></span>
-        <span class="cartoon-shadow"></span>
-        <span class="couple-eyes"><span class="eye eye-l"></span><span class="eye eye-r"></span></span>
-        <span class="couple-img">
-          <img class="cartoon-couple" src="images/couple-cartoon.png" alt=""
-               onerror="this.hidden=true;this.nextElementSibling.hidden=false">
-          <span class="couple-emoji" hidden>👫</span>
-        </span>
-        <span class="fx sparkle s1">✦</span>
-        <span class="fx sparkle s2">✨</span>
-        <span class="fx sparkle s3">✧</span>
-        <span class="fx heart h1">❤</span>
-        <span class="fx heart h2">💖</span>
-        <span class="fx heart h3">❤</span>
+      <!-- couple video in a Polaroid-style frame — floats above the envelope.
+           Bottom edge overlaps the flap (~-20px) so it looks tucked in.
+           If the video can't load, the PNG cartoon shows instead. -->
+      <div class="video-polaroid" aria-hidden="true">
+        <video class="couple-video"
+               src="images/couple-animation.mp4"
+               autoplay
+               loop
+               muted
+               playsinline
+               webkit-playsinline
+               preload="auto"
+               disablepictureinpicture
+               controlslist="nodownload"
+               aria-label="Animated wedding couple"></video>
+        <img class="couple-fallback" src="images/couple-cartoon.png" alt="" style="display:none">
+        <div class="polaroid-label">Rounak ❤ Kakoli</div>
       </div>
 
       <!-- the envelope (main element) -->

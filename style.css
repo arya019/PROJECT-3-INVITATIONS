@@ -764,6 +764,121 @@ body[data-theme="royal-red"]::before {
 }
 .envelope-overlay.gone { opacity: 0; visibility: hidden; }
 
+/* ════════════════════════════════════════════════════════════════
+   COUPLE VIDEO — Polaroid-style frame floating above the envelope.
+   The video's white background is INTENTIONAL here: the cream frame
+   makes it read as a Polaroid photo (no mask / blend / filter tricks).
+   Classes: .video-polaroid (frame + float loop), .couple-video (the
+   <video> itself), .polaroid-label (caption), .couple-fallback (PNG
+   shown only if the video fails to load).
+   To swap back to the static PNG cartoon, see the "PNG CARTOON
+   (dormant)" block below — swap the markup in index.html back to
+   .cartoon-wrap and these video rules go inert automatically.
+   ════════════════════════════════════════════════════════════════ */
+.video-polaroid {
+  display: inline-block;
+  padding: 10px 10px 34px 10px;
+  background: #fdf6e9;                        /* warm cream — matches envelope */
+  border-radius: 6px;
+  box-shadow:
+    0 10px 30px rgba(139, 26, 26, 0.18),
+    inset 0 0 0 1px rgba(201, 162, 39, 0.35);
+  position: relative;
+  transform: rotate(-2deg);
+  transition: transform 0.4s ease;
+  z-index: 5;                                 /* above the envelope */
+  margin-bottom: 0;                           /* mobile/tablet default: NO overlap —
+                                                 the desktop -20px tuck lives ONLY
+                                                 in the min-width:768 rule below */
+  animation: polaroidFloat 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+.video-polaroid:hover {
+  transform: rotate(0deg) scale(1.03);
+}
+
+/* happy jump on envelope click (script.js adds .jump once).
+   translateY-only, no rotation — safe on mobile (can't collide). */
+.video-polaroid.jump {
+  animation: jump 0.8s ease-out;
+}
+
+.couple-video {
+  display: block;
+  width: clamp(120px, 18vw, 200px);
+  height: auto;
+  border-radius: 3px;
+  background: #fdf6e9;                        /* fallback bg */
+  border: none;
+}
+
+.polaroid-label {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(0.7rem, 2.2vw, 0.9rem);
+  color: #8b1a1a;
+}
+
+/* PNG fallback — revealed by script.js only if the video errors */
+.couple-fallback {
+  display: none;
+  width: clamp(120px, 18vw, 200px);
+  height: auto;
+  object-fit: contain;
+  border-radius: 3px;
+  background: #fdf6e9;
+  border: none;
+}
+
+/* washi tape at top */
+.video-polaroid::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 60px;
+  height: 16px;
+  background: rgba(201, 162, 39, 0.55);
+  border-radius: 2px;
+  z-index: 10;
+}
+
+/* soft glow behind */
+.video-polaroid::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(ellipse at center, rgba(201,162,39,0.15) 0%, transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes polaroidFloat {
+  0%, 100% { transform: rotate(-2deg) translateY(0); }
+  50%      { transform: rotate(-1deg) translateY(-6px); }
+}
+/* rotation-free twin for small phones (≤480px) — straight frame */
+@keyframes polaroidFloatStraight {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes jump {
+  0%   { transform: translateY(0) scale(1); }
+  40%  { transform: translateY(-30px) scale(1.1); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* ── PNG CARTOON (dormant swap-back path) ─────────────────────────
+   Rules for the static .cartoon-wrap markup (previous design). No
+   matching elements exist in index.html right now, so this block is
+   inert — it is kept so swapping back to the PNG is markup-only. ── */
 /* ── cartoon couple: lets the envelope tuck up under it (peeking) ── */
 .cartoon-wrap {
   position: relative;
@@ -772,17 +887,36 @@ body[data-theme="royal-red"]::before {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  margin-bottom: -26px;      /* feet overlap the envelope's top edge   */
+  margin-bottom: 0;      /* no negative margins below desktop — the -20px
+                            tuck lives ONLY in the min-width:768 rule */
   z-index: 5;
   pointer-events: none;
 }
-.couple-img { display: block; height: 100%; }
+.couple-img {
+  display: block;
+  height: 100%;
+  /* 1) gentle floating: translateY -8px, 2.5s loop (own layer so it
+     never fights the sway / breathe on the <img> itself) */
+  animation: coupleFloatY 2.5s ease-in-out infinite;
+}
 .cartoon-couple {
   height: 100%;
   max-width: 70vw;
   object-fit: contain;
   position: relative;
-  animation: coupleFloat 2.5s ease-in-out infinite;   /* float + sway + breathe */
+  /* transparent PNG blends with the envelope — never a box: no
+     background, no border, no box-shadow here (only drop-shadow
+     filters, which follow the alpha channel) */
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  /* 2) swaying rotation -3deg → +3deg, 3.5s loop (uses the independent
+     `rotate` property) + 3) breathing scale 1.0 → 1.03 (uses the
+     independent `scale` property) — both compose cleanly with the
+     float translate on the wrapper above */
+  animation:
+    coupleSway 3.5s ease-in-out infinite,
+    coupleBreathe 3s ease-in-out infinite;
 }
 .couple-emoji {              /* fallback if couple-cartoon.png is missing */
   display: block;
@@ -805,7 +939,8 @@ body[data-theme="royal-red"]::before {
   z-index: -1;
   animation: glowPulse 4s ease-in-out infinite;
 }
-/* soft ellipse shadow, synced (inverse) with the float */
+/* soft ellipse shadow, synced with the 2.5s float (same duration so it
+   shrinks/fades exactly as the couple rises) */
 .cartoon-shadow {
   position: absolute;
   left: 50%;
@@ -814,7 +949,7 @@ body[data-theme="royal-red"]::before {
   height: 16px;
   transform: translateX(-50%);
   background: radial-gradient(ellipse at center, rgba(0, 0, 0, .24), transparent 70%);
-  animation: shadowPulse 4s ease-in-out infinite;
+  animation: shadowPulse 2.5s ease-in-out infinite;
 }
 /* blink overlay: two small dark ellipses that flash on the loop --
    reposition top/left % to match your couple's eye line */
@@ -839,19 +974,26 @@ body[data-theme="royal-red"]::before {
 /* floating hearts + sparkles around the couple */
 .fx { position: absolute; pointer-events: none; }
 .fx.heart   { font-size: 1.15rem; bottom: 6px; animation: heartUp 3s ease-in-out infinite; }
-.fx.heart.h2 { left: 14%; animation-delay: 1s; }
-.fx.heart.h1 { left: 5%; }
-.fx.heart.h3 { right: 8%; animation-delay: 2s; }
+.fx.heart.h2 { left: 14%; animation-delay: 1s; --bx: 0px; }
+.fx.heart.h1 { left: 5%; --bx: -14px; }
+.fx.heart.h3 { right: 8%; animation-delay: 2s; --bx: 14px; }
 .fx.sparkle { font-size: 1rem; color: #d9a441; animation: twinkle 2.6s ease-in-out infinite; }
 .fx.sparkle.s1 { top: 4%; left: 10%; }
 .fx.sparkle.s2 { top: 20%; right: 12%; animation-delay: .8s; }
 .fx.sparkle.s3 { top: 2%; left: 46%; animation-delay: 1.5s; }
 
-/* hover → couple bounces & hearts burst outward; `:has(.open)` → jump once */
+/* hover → couple bounces & hearts burst outward;
+   open → celebratory jump once (jump runs on the float wrapper so it
+   temporarily replaces the float loop, then the float resumes; the
+   bounce runs on the <img> via `transform`, composing cleanly with the
+   sway (`rotate`) + breathe (`scale`) base loops) */
 .envelope-overlay:hover .couple-img { animation: coupleBounce .8s ease-in-out infinite; }
 .envelope-overlay:hover .fx.heart   { animation: heartBurst .8s ease-in-out infinite; }
+.envelope-overlay:has(.envelope.open) .couple-img {
+  animation: coupleJumpLegacy .7s ease 1, coupleFloatY 2.5s ease-in-out .7s infinite;
+}
 .envelope-overlay:has(.envelope.open) .cartoon-couple {
-  animation: coupleJump .7s ease 1, coupleBounce .9s ease 1;
+  animation: coupleSway 3.5s ease-in-out infinite, coupleBreathe 3s ease-in-out infinite, coupleBounce .9s ease 1;
 }
 
 /* ── the envelope button itself ──────────────────────────────── */
@@ -876,6 +1018,9 @@ body[data-theme="royal-red"]::before {
   outline-offset: 6px;              /* visible keyboard focus ring    */
 }
 .envelope:focus-visible { outline: 2px dashed var(--gold); outline-offset: 6px; }
+/* open state: let the card rise ABOVE the envelope — visible overflow so
+   the card is never clipped or hidden behind the flap */
+.envelope.open { overflow: visible; }
 
 /* every layer is full-positioned against the aspect-ratio box */
 .envelope > * { position: absolute; }
@@ -957,14 +1102,16 @@ body[data-theme="royal-red"]::before {
 }
 .envelope.open .env-seal { opacity: 0; transform: translate(-50%, -120px) scale(.5); }
 
-/* The invitational card. It starts pushed DOWN below the envelope's
-   visible area (clipped by the envelope's overflow:hidden + opacity 0),
-   so nothing peeks out — then it slides UP out of the pocket. */
+/* The invitational card. Closed: pushed DOWN below the envelope's visible
+   area (clipped by the envelope's overflow:hidden + opacity 0), so nothing
+   peeks out. Open: slides UP so ~60-70% sits above the envelope's top edge
+   with its bottom still tucked inside (see .envelope.open → visible). */
 .env-letter {
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: 80%;
+  width: 82%;                            /* 82% of envelope width */
+  min-height: 160px;                     /* room for all three lines, grows if text wraps */
   transform: translate(-50%, 100%);        /* fully below the flap, clipped */
   opacity: 0;
   z-index: 4;                              /* above the envelope once out   */
@@ -973,7 +1120,8 @@ body[data-theme="royal-red"]::before {
   border: 1px solid var(--gold);           /* gold edge                     */
   border-radius: 8px;
   box-shadow: 0 12px 40px rgba(139, 26, 26, .15);
-  padding: 28px 24px;
+  padding: 20px 16px;
+  line-height: 1.6;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -982,38 +1130,42 @@ body[data-theme="royal-red"]::before {
   text-align: center;
 }
 /* Step 2 (0.7→1.5s): card glides up out of the pocket with a gentle
-   overshoot; Step 3 (1.5→2s): settles with a scale pop + soft glow. */
+   overshoot; Step 3 (1.5→2s): settles with a scale pop + soft glow.
+   Final rest: translate(-50%, -55%) at z-index 6 — most of the card
+   visible above the envelope, above the opened flap (z-index 0). */
 .envelope.open .env-letter {
+  z-index: 6;
   animation:
     envCardOut    .8s cubic-bezier(0.34, 1.56, 0.64, 1) .7s forwards,
     envCardSettle .5s ease-out 1.5s forwards;
 }
 @keyframes envCardOut {
   0%   { transform: translate(-50%, 100%); opacity: 0; }
-  100% { transform: translate(-50%, -85%); opacity: 1; }
+  100% { transform: translate(-50%, -55%); opacity: 1; }
 }
 @keyframes envCardSettle {
-  0%   { transform: translate(-50%, -85%) scale(.95);
+  0%   { transform: translate(-50%, -55%) scale(.95);
          box-shadow: 0 12px 40px rgba(139, 26, 26, .15); }
-  60%  { transform: translate(-50%, -85%) scale(1.02); }
-  100% { transform: translate(-50%, -85%) scale(1);
+  60%  { transform: translate(-50%, -55%) scale(1.02); }
+  100% { transform: translate(-50%, -55%) scale(1);
          box-shadow: 0 12px 40px rgba(139, 26, 26, .15),
                      0 0 30px rgba(201, 162, 39, .35); }
 }
 .env-top-bn {
   font-family: var(--font-bn-serif, 'Noto Serif Bengali', serif);
   color: var(--maroon);
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   letter-spacing: .14em;
 }
 .env-inv {
   font-family: var(--font-bn-serif, 'Noto Serif Bengali', serif);
-  color: var(--gold);
+  color: var(--maroon);
   font-size: clamp(1.4rem, 5vw, 1.9rem);
   font-weight: 700;
 }
 .env-couple {
   font-family: 'Playfair Display', serif;
+  font-style: italic;
   color: var(--maroon);
   font-size: clamp(.95rem, 3.5vw, 1.15rem);
   letter-spacing: .03em;
@@ -1109,7 +1261,9 @@ body[data-theme="royal-red"]::before {
 /* ── envelope: mobile scale ──────────────────────────────────── */
 @media (max-width: 640px) {
   .envelope { width: min(85vw, 420px); }
-  .cartoon-wrap { height: 110px; width: 78vw; margin-bottom: -20px; }
+  .cartoon-wrap { height: 110px; width: 78vw; margin-bottom: 0; }  /* dormant PNG path:
+     no negative margins below desktop — the -20px tuck lives ONLY in
+     the min-width:768 rule; the ≤767px block below enforces margin:0 */
   .cartoon-glow { width: 120px; height: 120px; }
   .env-corner { width: 22px; height: 22px; }
   .env-kalash { top: -2px; }
@@ -1121,9 +1275,65 @@ body[data-theme="royal-red"]::before {
   .env-band { gap: 6px; bottom: -10px; }
   .bp { width: 9px; height: 9px; }
   .env-side { width: 8px; background-size: 8px 12px; }
-  .env-top-bn { font-size: .95rem; }
+  .env-top-bn { font-size: .9rem; }
   .env-inv { font-size: 1.3rem; }
   .env-couple { font-size: .95rem; }
+}
+
+/* ── phones + small tablets (≤767px): STRICT flex-column stacking, zero
+   negative margins anywhere. The overlay is a flex column with a real
+   20px gap; both children are in-flow (position:relative), so the gap
+   is structural and nothing can overlap. Desktop ≥768px keeps the
+   -20px tuck (see min-width:768 rule below). ──────────────────── */
+@media (max-width: 767px) {
+  .envelope-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;                     /* clear gap between cartoon and envelope */
+    padding: 20px 12px;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  .video-polaroid,
+  .cartoon-wrap {                  /* (dormant PNG path shares the fix) */
+    position: relative;            /* NOT absolute */
+    margin: 0;                     /* no negative margins */
+    z-index: 2;
+  }
+  .video-polaroid { transform: rotate(0deg); }  /* straighten (also see
+    polaroidFloatStraight — a static transform alone loses to the
+    running float animation, so ≤480px swaps the animation too) */
+  .video-polaroid .couple-video,
+  .video-polaroid .couple-fallback,
+  .video-polaroid .couple-cartoon {
+    width: 110px;                  /* smaller on mobile */
+    height: auto;
+    display: block;
+  }
+  .envelope {
+    position: relative;            /* NOT absolute */
+    width: 88vw;
+    max-width: 340px;
+    margin: 0;
+    z-index: 1;
+  }
+  /* open card paints above EVERYTHING on mobile — text can never hide
+     behind the cartoon (card z-10 > polaroid z-2) */
+  .envelope.open .env-letter { z-index: 10; }
+}
+/* ── small phones (≤480px): additionally straighten the frame (no tilt)
+   via a rotation-free float loop — a static transform would lose to the
+   running animation, so the animation itself is swapped. (Note: the
+   end-of-file override pauses the float on mobile while debugging.) ─ */
+@media (max-width: 480px) {
+  .video-polaroid { animation: polaroidFloatStraight 3s ease-in-out infinite; }
+}
+/* ── desktop (≥768px): the nice -20px overlap lives ONLY here ─────── */
+@media (min-width: 768px) {
+  .video-polaroid,
+  .cartoon-wrap { margin-bottom: -20px; }
 }
 
 /* ============================================================
@@ -1179,6 +1389,35 @@ body[data-theme="royal-red"]::before {
 }
 
 /* ============================================================
+   ANDROID COMPATIBILITY (landing chrome + safe global guards)
+   Only .envelope / .music-toggle / .envelope-overlay are restyled
+   here — event cards and event pages are NOT touched.
+   ============================================================ */
+/* 1) no double-tap zoom delay on tappable controls */
+.envelope, .music-toggle, button {
+  touch-action: manipulation;
+}
+/* 2) tap targets ≥ 48px (music toggle is already 52px; enforce the floor) */
+.music-toggle {
+  min-width: 48px;
+  min-height: 48px;
+}
+/* 3) dynamic viewport height — Android Chrome URL bar resizes 100vh */
+.envelope-overlay {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+/* 4) never any horizontal scroll (360px / 393px / 412px widths) */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+/* 5) ≥16px body text on mobile → Chrome won't force-zoom on tap */
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+}
+
+/* ============================================================
    FOOTER
    ============================================================ */
 .footer {
@@ -1222,12 +1461,31 @@ body[data-theme="royal-red"]::before {
 @keyframes ripple { to { transform: scale(4); opacity: 0; } }
 @keyframes spinSlow { to { transform: rotate(360deg); } }
 
-/* cartoon couple: gentle float + sway + breath */
-@keyframes coupleFloat {
+/* NOTE: the video now floats via @keyframes polaroidFloat in the video
+   block above (no @keyframes coupleFloat — a duplicate name would clash).
+   The old PNG combined float loop is preserved as coupleFloatLegacy. */
+@keyframes coupleFloatLegacy {
   0%, 100% { transform: translateY(0) translateX(0) scale(1); }
   25%      { transform: translateY(-9px) translateX(4px) scale(1.025); }
   50%      { transform: translateY(0)  translateX(-3px) scale(.99); }
   75%      { transform: translateY(-6px) translateX(2px) scale(1.02); }
+}
+/* 1) gentle floating: translateY -8px, 2.5s loop (on .couple-img) */
+@keyframes coupleFloatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+/* 2) swaying rotation: -3deg → +3deg, 3.5s loop (independent `rotate`
+   property on .cartoon-couple, so it composes with float + breathe) */
+@keyframes coupleSway {
+  0%, 100% { rotate: -3deg; }
+  50%      { rotate: 3deg; }
+}
+/* 3) breathing scale: 1.0 → 1.03 (independent `scale` property on
+   .cartoon-couple, so it composes with float + sway) */
+@keyframes coupleBreathe {
+  0%, 100% { scale: 1; }
+  50%      { scale: 1.03; }
 }
 /* soft glow + shadow that pulses behind the couple */
 @keyframes coupleGlow {
@@ -1240,8 +1498,10 @@ body[data-theme="royal-red"]::before {
   90%, 94%      { transform: scaleY(.94); }
   92%           { transform: scaleY(1.03); }
 }
-/* one celebratory jump when the envelope opens */
-@keyframes coupleJump {
+/* NOTE: the click jump is now @keyframes jump (translateY-only) in the
+   video block above. The old PNG jump is preserved as coupleJumpLegacy. */
+/* one celebratory jump when the envelope opens (PNG path) */
+@keyframes coupleJumpLegacy {
   0%   { transform: translateY(0) scale(1); }
   30%  { transform: translateY(-38px) scale(1.06, .94); }
   60%  { transform: translateY(6px) scale(.97, 1.06); }
@@ -1263,10 +1523,10 @@ body[data-theme="royal-red"]::before {
   50%      { transform: scale(1.12); }
 }
 
-/* couple: hover bounce */
+/* couple: hover bounce (scale 1.15) */
 @keyframes coupleBounce {
   0%, 100% { transform: scale(1) translateY(0); }
-  40%      { transform: scale(1.12) translateY(-6px); }
+  40%      { transform: scale(1.15) translateY(-6px); }
   70%      { transform: scale(.98) translateY(2px); }
 }
 /* eye blink — two dark ellipses flash closed on the loop */
