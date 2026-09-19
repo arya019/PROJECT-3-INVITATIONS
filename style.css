@@ -483,13 +483,14 @@ body[data-theme="royal-red"]::before {
 @media (max-width: 600px) {
   .home-hero {
     width: 92vw;
-    padding: 5rem 1rem 3rem;
-    min-height: 72vh;
+    padding: 2.5rem 1rem 2rem;
+    min-height: auto;
   }
   .home-hero .hero-names { font-size: 2rem; gap: .35rem; }
   .home-hero .hero-poem  { font-size: .95rem; }
   .home-hero .hero-invite { font-size: .95rem; }
   .home-hero .hero-cta   { padding: 12px 26px; }
+  #home #events { padding-top: 2rem; }
 }
 
 /* ── EVENT CARDS — matching set, only colours differ ────────── */
