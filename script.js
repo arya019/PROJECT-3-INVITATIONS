@@ -279,29 +279,31 @@ function initCoupleVideo() {
      continuously across ALL section switches — and mobile
      browsers never get a second chance to block autoplay.
    • Starts only on the envelope click (a real user gesture).
-   • The top-right button toggles mute/unmute (🔇/🔊).
-   • localStorage remembers ONLY the mute state across visits
-     (no time-tracking needed — the audio never stops).
+   • The top-right button only plays/pauses on explicit clicks.
+   • sessionStorage keeps state WITHIN the current tab only, so
+     closing the tab/browser never auto-resumes music later.
+   • beforeunload/pagehide/visibility handlers stop or pause the
+     audio; returning to the tab never resumes it automatically.
    ============================================================ */
 
 const MUSIC_STATE = {
   LAST_MUTE: "musicMuted",     // "1" = muted
   STARTED:   "musicStarted",   // "true" once the user has started the music
-  TIME:      "musicCurrentTime" // seconds, for resuming after a tab switch
+  TIME:      "musicCurrentTime" // seconds, saved only when hidden/paused
 };
 
-function getLS(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
-function setLS(key, val) { try { localStorage.setItem(key, val); } catch (e) { /* ignore */ } }
+function getSS(key) { try { return sessionStorage.getItem(key); } catch (e) { return null; } }
+function setSS(key, val) { try { sessionStorage.setItem(key, val); } catch (e) { /* ignore */ } }
 
 function musicAudio() {
   return document.getElementById("bgMusic");
 }
 
-/* Show 🔊 when playing, 🔇 when muted. */
+/* Show 🔊 only while audibly playing; 🔇 when paused or muted. */
 function updateMusicToggleIcon() {
   const a = musicAudio();
   const t = $(".music-toggle");
-  if (t && a) t.textContent = a.muted ? "🔇" : "🔊";
+  if (t && a) t.textContent = (!a.paused && !a.muted) ? "🔊" : "🔇";
 }
 
 /* show a tiny buffering spinner on the button while the file loads */
@@ -310,19 +312,25 @@ function setMusicLoading(on) {
   if (t) t.classList.toggle("loading", !!on);
 }
 
-/* Toggle mute/unmute (the audio element itself is never torn down,
-   so unmuting resumes RIGHT where it was — instantly). */
+/* Explicit play/pause toggle. This is a user gesture, so it is the
+   only way to resume after the tab was hidden. It never auto-plays. */
 function toggleMusic() {
   const a = musicAudio();
   if (!a) return;
-  if (a.muted) {
-    a.muted = false;
-    setLS(MUSIC_STATE.LAST_MUTE, "0");
-    // if it never actually started, the toggle click is a valid gesture → play
-    if (a.paused) { const p = a.play(); if (p && p.catch) p.catch(() => {}); }
+  if (a.paused) {
+    // restore the source if an unload handler released it
+    if (!a.currentSrc) {
+      try { a.src = (W && W.musicSrc) || "images/shehnai.mp3"; } catch (e) {}
+      try { a.load(); } catch (e) {}
+    }
+    const t = parseFloat(getSS(MUSIC_STATE.TIME) || "0");
+    if (isFinite(t) && t > 0) { try { a.currentTime = t; } catch (e) {} }
+    a.muted = getSS(MUSIC_STATE.LAST_MUTE) === "1";
+    setSS(MUSIC_STATE.STARTED, "true");
+    playFaded(a);
   } else {
-    a.muted = true;
-    setLS(MUSIC_STATE.LAST_MUTE, "1");
+    try { setSS(MUSIC_STATE.TIME, String(a.currentTime)); } catch (e) {}
+    try { a.pause(); } catch (e) {}
   }
   updateMusicToggleIcon();
 }
@@ -348,50 +356,54 @@ function playFaded(a) {
   fadeAudio(a, 1, 500);
 }
 
-/* User returned to the tab: if music had started and isn't muted,
-   resume it where it stopped. */
-function resumeMusic() {
+/* Fully stop and release the audio when the page/tab is closing. */
+function stopAudioCompletely() {
   const a = musicAudio();
   if (!a) return;
-  const started = getLS(MUSIC_STATE.STARTED) === "true";
-  const muted   = getLS(MUSIC_STATE.LAST_MUTE) === "1";
-  if (started && !muted && a.paused) playFaded(a);
+  try { a.pause(); } catch (e) {}
+  try { a.currentTime = 0; } catch (e) {}
+  try { a.src = ""; a.load(); } catch (e) {}
+  try {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = null;
+      navigator.mediaSession.playbackState = "none";
+    }
+  } catch (e) {}
+  updateMusicToggleIcon();
 }
 
-/* Lock-screen / notification media controls (mobile). Requires a gesture
-   to play, but pause works everywhere and the wrapper is optional. */
-function initMediaSession() {
-  if (!("mediaSession" in navigator)) return;
-  try {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title:    "Shehnai - Bengali Wedding",
-      artist:   `${W.groomEn || W.groom} & ${W.brideEn || W.bride} Wedding`,
-      album:    "Wedding Invitation"
-    });
-    navigator.mediaSession.setActionHandler("play",  () => playFaded(musicAudio()));
-    navigator.mediaSession.setActionHandler("pause", () => { const a = musicAudio(); if (a) a.pause(); });
-  } catch (e) { /* media session unsupported → skip */ }
+/* Pause when the tab is hidden or put in the background. Returning to the
+   tab must NOT resume automatically; only an explicit toggle click resumes. */
+function pauseAudioForHidden() {
+  const a = musicAudio();
+  if (!a) return;
+  if (!a.paused) {
+    try { setSS(MUSIC_STATE.TIME, String(a.currentTime)); } catch (e) {}
+    try { a.pause(); } catch (e) {}
+  }
+  updateMusicToggleIcon();
 }
 
 /* The envelope click — first user gesture that starts the music.
-   Respects a previously-saved mute state. */
+   Honors the mute choice saved within the current tab session. */
 function startMusicOnEnvelope() {
   const a = musicAudio();
   if (!a) return;
-  a.muted = getLS(MUSIC_STATE.LAST_MUTE) === "1";   // honor remembered mute
-  setLS(MUSIC_STATE.STARTED, "true");              // remember for tab-return resume
+  a.muted = getSS(MUSIC_STATE.LAST_MUTE) === "1";
+  setSS(MUSIC_STATE.STARTED, "true");
   playFaded(a);                                    // begin now, in this gesture, fading in
   updateMusicToggleIcon();
 }
 
-/* Wire the toggle, apply saved mute, attach the buffering spinner, and
-   keep the music alive across tab switches (visibility / focus + resume). */
+/* Wire the explicit toggle, apply the session mute choice, attach the
+   buffering spinner, and stop/pause audio on hide or unload. There is no
+   auto-start and no auto-resume anywhere in this flow. */
 function initMusic() {
   const a = musicAudio();
   const toggle = $(".music-toggle");
   if (!a) return;
 
-  a.muted = getLS(MUSIC_STATE.LAST_MUTE) === "1";   // restore mute across visits
+  a.muted = getSS(MUSIC_STATE.LAST_MUTE) === "1";
   updateMusicToggleIcon();
 
   if (toggle) toggle.addEventListener("click", toggleMusic);
@@ -402,27 +414,11 @@ function initMusic() {
   a.addEventListener("playing",  () => setMusicLoading(false));
   a.addEventListener("error",    () => setMusicLoading(false));
 
-  initMediaSession();
-
-  // if the user had the music going last time, resume from the saved spot
-  // (autoplay may be blocked on mobile → silent .catch(), the toggle/card
-  // then becomes the user gesture that plays it).
-  const started = getLS(MUSIC_STATE.STARTED) === "true";
-  if (started && !a.muted) {
-    const t = parseFloat(getLS(MUSIC_STATE.TIME) || "0");
-    if (isFinite(t) && t > 0) a.currentTime = t;
-    playFaded(a);
-  }
-
-  // save the playback position every 250 ms so we can resume mid-song
-  setInterval(() => {
-    if (!a.paused) setLS(MUSIC_STATE.TIME, String(a.currentTime));
-  }, 250);
-
-  // when the user comes back to the tab, resume music from where it stopped
-  const onVisible = () => { if (document.visibilityState === "visible") resumeMusic(); };
-  document.addEventListener("visibilitychange", onVisible);
-  window.addEventListener("focus", () => { if (document.visibilityState === "visible") resumeMusic(); });
+  window.addEventListener("beforeunload", stopAudioCompletely);
+  window.addEventListener("pagehide", pauseAudioForHidden);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") pauseAudioForHidden();
+  });
 }
 
 /* ============================================================
