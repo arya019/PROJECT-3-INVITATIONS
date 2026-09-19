@@ -493,9 +493,6 @@ function fillEvent(root) {
   const mapOpen = $(".js-map-open", root);
   if (mapOpen) { mapOpen.href = ev.mapLink; }
 
-  // gallery from config.photos
-  buildGallery($(".js-gallery", root), ev.photos || []);
-
   // footer names
   text($(".js-f-groom", root), W.groom);
   text($(".js-f-bride", root), W.bride);
@@ -600,41 +597,7 @@ function startCountdown(root, isoDate) {
 }
 
 /* ============================================================
-   9. GALLERY + LIGHTBOX
-   ============================================================ */
-function buildGallery(gal, photos) {
-  if (!gal) return;
-  gal.innerHTML = "";
-  photos.forEach((src, i) => {
-    const fig = document.createElement("figure");
-    const img = document.createElement("img");
-    img.loading = "lazy";
-    img.alt = `ছবি ${i + 1}`;
-    img.src = src;
-    fig.appendChild(img);
-    fig.addEventListener("click", () => openLightbox(i, photos));
-    gal.appendChild(fig);
-  });
-}
-
-function openLightbox(start, photos) {
-  const lb = $(".lightbox"); if (!lb) return;
-  const img = $(".lb-img");
-  let idx = start;
-  const show = (i) => { idx = (i + photos.length) % photos.length; img.src = photos[idx]; };
-  show(start);
-  lb.classList.add("open");
-  const close = () => lb.classList.remove("open");
-  $(".lb-close").onclick = close;
-  $(".lb-prev").onclick = () => show(idx - 1);
-  $(".lb-next").onclick = () => show(idx + 1);
-  lb.onclick = (e) => { if (e.target === lb) close(); };
-  const key = (e) => { if (e.key === "Escape") { close(); document.removeEventListener("keydown", key); } };
-  document.addEventListener("keydown", key);
-}
-
-/* ============================================================
-   10. DOWNLOAD INVITATION CARD AS AN IMAGE
+   9. DOWNLOAD INVITATION CARD AS AN IMAGE
        Vanilla-only: offscreen live clone → SVG foreignObject →
        canvas → PNG. Works in Chrome / Edge / Firefox.
    ============================================================ */

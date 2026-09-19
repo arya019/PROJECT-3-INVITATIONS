@@ -44,9 +44,8 @@ const WEDDING = {
        • time     = line 3 (Bengali time), e.g. "সকাল ১১টা"
        • venue    = Bengali address · venueDetail = English address
        • mapLink  = the same Google Maps short link for every event
-       • coords   = map centre for that event
-       • photos   = gallery images
-       • icon     = small themed icon (images/ folder)
+        • coords   = map centre for that event
+        • icon     = small themed icon (images/ folder)
      ═══════════════════════════════════════════════════════════ */
   events: {
 
@@ -65,13 +64,7 @@ const WEDDING = {
       theme:   "warm-yellow",
       page:    "aiburo-bhat.html",
       icon:    "images/aiburo-icon.png",
-      line:    "মিষ্টি মুখের শুভ উদযাপন",
-      photos: [
-        "https://picsum.photos/seed/aiburo1/800/600",
-        "https://picsum.photos/seed/aiburo2/800/600",
-        "https://picsum.photos/seed/aiburo3/800/600",
-        "https://picsum.photos/seed/aiburo4/800/600"
-      ]
+      line:    "মিষ্টি মুখের শুভ উদযাপন"
     },
 
     /* ── EVENT 2 · গায়ে হলুদ · Gaye Holud — 24 Nov, Tuesday ── */
@@ -89,13 +82,7 @@ const WEDDING = {
       theme:   "marigold",
       page:    "gaye-holud.html",
       icon:    "images/marigold-icon.png",
-      line:    "হলুদের আভায় সেজেছে ঘর",
-      photos: [
-        "https://picsum.photos/seed/holud1/800/600",
-        "https://picsum.photos/seed/holud2/800/600",
-        "https://picsum.photos/seed/holud3/800/600",
-        "https://picsum.photos/seed/holud4/800/600"
-      ]
+      line:    "হলুদের আভায় সেজেছে ঘর"
     },
 
     /* ── EVENT 3 · বিবাহ অনুষ্ঠান · Biye / Shubho Bibaho — 24 Nov, Tue ── */
@@ -113,13 +100,7 @@ const WEDDING = {
       theme:   "royal-red",
       page:    "biye.html",
       icon:    "images/kalash-icon.png",
-      line:    "মাঙ্গলিক শুভ বিবাহ",
-      photos: [
-        "https://picsum.photos/seed/biye1/800/600",
-        "https://picsum.photos/seed/biye2/800/600",
-        "https://picsum.photos/seed/biye3/800/600",
-        "https://picsum.photos/seed/biye4/800/600"
-      ]
+      line:    "মাঙ্গলিক শুভ বিবাহ"
     },
 
     /* ── EVENT 4 · প্রীতিভোজ / বৌভাত · Pritibhoj / Boubhat — 25 Nov, Wed ── */
@@ -137,13 +118,7 @@ const WEDDING = {
       theme:   "emerald-gold",
       page:    "bojhat.html",
       icon:    "images/ring-icon.png",
-      line:    "মধুর সম্মানে সাদর অভ্যর্থনা",
-      photos: [
-        "https://picsum.photos/seed/bojhat1/800/600",
-        "https://picsum.photos/seed/bojhat2/800/600",
-        "https://picsum.photos/seed/bojhat3/800/600",
-        "https://picsum.photos/seed/bojhat4/800/600"
-      ]
+      line:    "মধুর সম্মানে সাদর অভ্যর্থনা"
     }
   },
 
