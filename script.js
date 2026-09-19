@@ -279,11 +279,17 @@ function initCoupleVideo() {
      continuously across ALL section switches — and mobile
      browsers never get a second chance to block autoplay.
    • Starts only on the envelope click (a real user gesture).
-   • The top-right button only plays/pauses on explicit clicks.
+   • The first gesture also "unlocks" the audio element, so later
+     auto-resume attempts are allowed by the browser.
+   • The top-right button toggles mute, and resumes playback when
+     tapped while paused (both are explicit user gestures).
    • sessionStorage keeps state WITHIN the current tab only, so
      closing the tab/browser never auto-resumes music later.
-   • beforeunload/pagehide/visibility handlers stop or pause the
-     audio; returning to the tab never resumes it automatically.
+   • hidden → pause + remember position; visible/focus → automatic
+     resume with no tap needed (falls back to "resume on next
+     touch/click" if the browser still blocks it).
+   • beforeunload stops + releases the audio and clears the resume
+     state, so a fresh visit always starts silent.
    ============================================================ */
 
 const MUSIC_STATE = {
@@ -294,6 +300,81 @@ const MUSIC_STATE = {
 
 function getSS(key) { try { return sessionStorage.getItem(key); } catch (e) { return null; } }
 function setSS(key, val) { try { sessionStorage.setItem(key, val); } catch (e) { /* ignore */ } }
+function delSS(key) { try { sessionStorage.removeItem(key); } catch (e) { /* ignore */ } }
+
+/* Transient (in-memory only) music flags — never persisted, so a fresh
+   page load always starts with audio locked and silent. */
+let audioUnlocked = false;    // true once a real user gesture unlocked <audio>
+let musicWasPlaying = false;  // true if hidden while playing → resume on return
+let isPageUnloading = false;  // true once beforeunload fires (never auto-resume)
+
+/* Unlock the audio element with the FIRST user gesture. Chrome Android
+   blocks autoplay without a gesture; once unlocked here, later
+   programmatic play() calls (e.g. auto-resume) are allowed. */
+function unlockAudio(a) {
+  if (!a || audioUnlocked) return;
+  audioUnlocked = true;
+  // NOTE: this play() is intentionally NOT followed by pause()/reset —
+  // pausing here would race the real start below and kill playback.
+  // The unlock play doubles as the start; callers unmute + fade in.
+  try {
+    a.muted = true;
+    const p = a.play();
+    if (p && p.then) {
+      p.then(() => {
+        a.muted = getSS(MUSIC_STATE.LAST_MUTE) === "1";
+        updateMusicToggleIcon();
+      }).catch(() => {
+        try { a.muted = getSS(MUSIC_STATE.LAST_MUTE) === "1"; } catch (e) {}
+      });
+    } else {
+      a.muted = getSS(MUSIC_STATE.LAST_MUTE) === "1";
+    }
+  } catch (e) {}
+}
+
+/* Fallback: if the browser blocks auto-resume, resume on the very next
+   touch/click/keypress anywhere — still no button the user must find. */
+function waitForGestureThenPlay(a) {
+  if (!a) return;
+  const resume = () => {
+    const muted = getSS(MUSIC_STATE.LAST_MUTE) === "1";
+    if (!muted && a.paused && musicWasPlaying && !isPageUnloading) {
+      try {
+        const p = a.play();
+        if (p && p.then) p.then(() => { musicWasPlaying = false; }).catch(() => {});
+        else musicWasPlaying = false;
+      } catch (e) {}
+    }
+    updateMusicToggleIcon();
+    document.removeEventListener("touchstart", resume);
+    document.removeEventListener("click", resume);
+    document.removeEventListener("keydown", resume);
+  };
+  document.addEventListener("touchstart", resume, { once: true, passive: true });
+  document.addEventListener("click", resume, { once: true });
+  document.addEventListener("keydown", resume, { once: true });
+}
+
+/* Attempt automatic resume (no user action needed). Called on
+   visibilitychange → visible and window focus. */
+function tryAutoResume() {
+  const a = musicAudio();
+  if (!a || isPageUnloading) return;
+  if (!musicWasPlaying || !a.paused) return;
+  if (getSS(MUSIC_STATE.LAST_MUTE) === "1") return;   // respect mute
+  try {
+    const p = a.play();
+    if (p && p.then) {
+      p.then(() => { musicWasPlaying = false; updateMusicToggleIcon(); })
+       .catch(() => waitForGestureThenPlay(a));
+    } else {
+      musicWasPlaying = false;
+    }
+  } catch (e) {
+    waitForGestureThenPlay(a);
+  }
+}
 
 function musicAudio() {
   return document.getElementById("bgMusic");
@@ -312,11 +393,13 @@ function setMusicLoading(on) {
   if (t) t.classList.toggle("loading", !!on);
 }
 
-/* Explicit play/pause toggle. This is a user gesture, so it is the
-   only way to resume after the tab was hidden. It never auto-plays. */
+/* Mute toggle + explicit resume. While playing it flips mute (saved
+   to sessionStorage); while paused it resumes — both are explicit user
+   gestures, so playback here is always allowed. It never auto-plays. */
 function toggleMusic() {
   const a = musicAudio();
   if (!a) return;
+  unlockAudio(a);
   if (a.paused) {
     // restore the source if an unload handler released it
     if (!a.currentSrc) {
@@ -327,10 +410,11 @@ function toggleMusic() {
     if (isFinite(t) && t > 0) { try { a.currentTime = t; } catch (e) {} }
     a.muted = getSS(MUSIC_STATE.LAST_MUTE) === "1";
     setSS(MUSIC_STATE.STARTED, "true");
+    musicWasPlaying = false;
     playFaded(a);
   } else {
-    try { setSS(MUSIC_STATE.TIME, String(a.currentTime)); } catch (e) {}
-    try { a.pause(); } catch (e) {}
+    a.muted = !a.muted;
+    setSS(MUSIC_STATE.LAST_MUTE, a.muted ? "1" : "0");
   }
   updateMusicToggleIcon();
 }
@@ -372,32 +456,46 @@ function stopAudioCompletely() {
   updateMusicToggleIcon();
 }
 
-/* Pause when the tab is hidden or put in the background. Returning to the
-   tab must NOT resume automatically; only an explicit toggle click resumes. */
+/* Pause when the tab is hidden or put in the background, remembering
+   that we were playing so the visible/focus handlers can auto-resume. */
 function pauseAudioForHidden() {
   const a = musicAudio();
   if (!a) return;
   if (!a.paused) {
+    musicWasPlaying = true;
     try { setSS(MUSIC_STATE.TIME, String(a.currentTime)); } catch (e) {}
     try { a.pause(); } catch (e) {}
   }
   updateMusicToggleIcon();
 }
 
-/* The envelope click — first user gesture that starts the music.
-   Honors the mute choice saved within the current tab session. */
+/* Unload: never resume afterwards. Clear the resume state and fully stop
+   the audio. (pagehide intentionally does NOT set the unloading flag —
+   it also fires when the tab is merely backgrounded, where auto-resume
+   on return is exactly what we want.) */
+function handleBeforeUnload() {
+  isPageUnloading = true;
+  delSS(MUSIC_STATE.STARTED);
+  delSS(MUSIC_STATE.TIME);
+  stopAudioCompletely();
+}
+
+/* The envelope click — first user gesture: unlocks the audio element and
+   starts the music. Honors the mute choice saved in this tab session. */
 function startMusicOnEnvelope() {
   const a = musicAudio();
   if (!a) return;
+  unlockAudio(a);
   a.muted = getSS(MUSIC_STATE.LAST_MUTE) === "1";
   setSS(MUSIC_STATE.STARTED, "true");
+  musicWasPlaying = false;
   playFaded(a);                                    // begin now, in this gesture, fading in
   updateMusicToggleIcon();
 }
 
-/* Wire the explicit toggle, apply the session mute choice, attach the
-   buffering spinner, and stop/pause audio on hide or unload. There is no
-   auto-start and no auto-resume anywhere in this flow. */
+/* Wire the toggle, apply the session mute choice, attach the buffering
+   spinner, and manage hide/visible/focus/unload. No auto-start on fresh
+   page load — playback begins only via envelope or toggle gestures. */
 function initMusic() {
   const a = musicAudio();
   const toggle = $(".music-toggle");
@@ -411,13 +509,19 @@ function initMusic() {
   // spinner: shown while buffering, hidden once it can play
   a.addEventListener("waiting", () => setMusicLoading(true));
   a.addEventListener("canplay",  () => setMusicLoading(false));
-  a.addEventListener("playing",  () => setMusicLoading(false));
+  a.addEventListener("playing",  () => { setMusicLoading(false); musicWasPlaying = false; updateMusicToggleIcon(); });
+  a.addEventListener("pause",    () => updateMusicToggleIcon());
   a.addEventListener("error",    () => setMusicLoading(false));
 
-  window.addEventListener("beforeunload", stopAudioCompletely);
+  window.addEventListener("beforeunload", handleBeforeUnload);
   window.addEventListener("pagehide", pauseAudioForHidden);
+  window.addEventListener("pageshow", () => { isPageUnloading = false; });
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") pauseAudioForHidden();
+    else if (document.visibilityState === "visible") tryAutoResume();
+  });
+  window.addEventListener("focus", () => {
+    if (document.visibilityState === "visible") tryAutoResume();
   });
 }
 
