@@ -148,9 +148,9 @@ function initNav() {
     }
   }
 
-  // scroll back to the top on view changes (smooth for user clicks)
-  function scrollTop(smooth) {
-    try { window.scrollTo({ top: 0, left: 0, behavior: smooth ? "smooth" : "auto" }); }
+  // scroll back to the top on view changes — instant, never smooth
+  function scrollTop() {
+    try { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
     catch (e) { window.scrollTo(0, 0); }
   }
 
@@ -177,10 +177,17 @@ function initNav() {
       return;
     }
     const id = decodeURIComponent(a.getAttribute("href").slice(1));
-    if (VIEW_IDS.indexOf(id) === -1) return;   // #events / #details-* → let it scroll
+    if (VIEW_IDS.indexOf(id) === -1) {
+      // in-view anchor (#events, #details-*, …) → scroll within the current
+      // view WITHOUT changing the URL/history, so Back stays well-behaved.
+      e.preventDefault();
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: "instant", block: "start" });
+      return;
+    }
     e.preventDefault();
-    if (location.hash === "#" + id) { switchView(id); scrollTop(true); }  // already there → just jump
-    else { go(id, true); scrollTop(true); }                               // push history + smooth scroll
+    if (location.hash === "#" + id) { switchView(id); scrollTop(); }   // already there → just jump
+    else { go(id, true); scrollTop(); }                                 // push history + jump
   });
 
   // browser back/forward → switch to the section the URL now points at
@@ -188,16 +195,26 @@ function initNav() {
   window.addEventListener("popstate", () => {
     const id = location.hash.replace("#", "");
     switchView(VIEW_IDS.indexOf(id) !== -1 ? id : "home");
-    scrollTop(true);
+    scrollTop();
   });
 
   // initial load: seed history so the FIRST Back press returns home
   // (or honours a deep-link like /#biye) instead of exiting the site.
   const initial = location.hash.replace("#", "");
   const seed = VIEW_IDS.indexOf(initial) !== -1 ? initial : "home";
-  history.replaceState({ section: seed }, "", "#" + seed);
+  if (seed === "home") {
+    history.replaceState({ section: seed }, "", "#" + seed);
+  } else {
+    // deep link: make 'home' the entry BEHIND the target view, so the
+    // first Back press lands on home inside the site — never exits.
+    history.replaceState({ section: "home" }, "", "#home");
+    history.pushState({ section: seed }, "", "#" + seed);
+    switchView(seed);
+    scrollTop();
+    return;
+  }
   switchView(seed);
-  scrollTop(false);
+  scrollTop();
 }
 
 /* ============================================================

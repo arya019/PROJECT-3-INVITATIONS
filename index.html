@@ -6,7 +6,7 @@
   <title>বিয়েয়ের আমন্ত্রণ — Wedding Invitation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700;900&family=Noto+Serif+Devanagari:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Great+Vibes&family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700;900&family=Noto+Serif+Devanagari:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="themes.css">
   <link rel="preload" as="audio" type="audio/mpeg" href="images/shehnai.mp3">
@@ -41,8 +41,6 @@
 
   <!-- ═══════════════════════ VIEW: LANDING ═══════════════════════ -->
   <section id="home" class="view active" data-theme="home">
-
-    <div class="floating-deco" aria-hidden="true"></div>
 
     <!-- ═════════════ opening envelope (cute Bengali traditional) ═════════════
          The envelope is a real <button> (accessible). A button only allows
@@ -155,6 +153,28 @@
       <div class="hero-deco">─── ❁ ───</div>
       <a class="btn hero-cta" href="#events">অনুষ্ঠানসমূহ দেখুন</a>
     </header>
+
+    <div class="floating-deco" aria-hidden="true"></div>
+
+    <!-- ═════════════ SAVE THE DATE — couple photo ═════════════
+         Below the envelope, above the 4 event cards. The floating /
+         entrance animations live on .photo-wrap so the frame's own
+         rotate + hover-straighten stay conflict-free. -->
+    <section class="save-the-date" aria-label="Save the Date">
+      <h2>আমাদের শুভ দিন</h2>
+      <div class="photo-wrap">
+        <div class="photo-frame">
+          <img src="images/couple-photo.jpg" alt="Rounak and Kakoli" width="896" height="1200">
+          <div class="photo-caption">Save the Date</div>
+        </div>
+      </div>
+      <div class="couple-names">Rounak ❤ Kakoli</div>
+      <div class="wedding-date">
+        <div>২৩ – ২৫ নভেম্বর ২০২৬</div>
+        <div class="wd-place">কয়েম্বা, বীরভূম</div>
+      </div>
+      <a class="btn sd-cta" href="#events">অনুষ্ঠান দেখুন →</a>
+    </section>
 
     <!-- the 4 event cards → switch views by hash -->
     <main>
