@@ -307,6 +307,7 @@ function delSS(key) { try { sessionStorage.removeItem(key); } catch (e) { /* ign
 let audioUnlocked = false;    // true once a real user gesture unlocked <audio>
 let musicWasPlaying = false;  // true if hidden while playing → resume on return
 let isPageUnloading = false;  // true once beforeunload fires (never auto-resume)
+let telNavPending = false;    // true briefly after a tel: tap (dialer, not unload)
 
 /* Unlock the audio element with the FIRST user gesture. Chrome Android
    blocks autoplay without a gesture; once unlocked here, later
@@ -363,6 +364,14 @@ function tryAutoResume() {
   if (!a || isPageUnloading) return;
   if (!musicWasPlaying || !a.paused) return;
   if (getSS(MUSIC_STATE.LAST_MUTE) === "1") return;   // respect mute
+  // beforeunload (real unload) releases src — restore it so a return
+  // from the dialer (tel:) can still resume without a manual toggle.
+  if (!a.currentSrc) {
+    try { a.src = (W && W.musicSrc) || "images/shehnai.mp3"; } catch (e) {}
+    try { a.load(); } catch (e) {}
+  }
+  const t = parseFloat(getSS(MUSIC_STATE.TIME) || "0");
+  if (isFinite(t) && t > 0) { try { a.currentTime = t; } catch (e) {} }
   try {
     const p = a.play();
     if (p && p.then) {
@@ -461,12 +470,40 @@ function stopAudioCompletely() {
 function pauseAudioForHidden() {
   const a = musicAudio();
   if (!a) return;
+  // Snapshot position whenever music was started & unmuted — even if the
+  // OS already paused the element for the call/dialer before we ran.
+  const started = getSS(MUSIC_STATE.STARTED) === "true";
+  const muted = getSS(MUSIC_STATE.LAST_MUTE) === "1";
   if (!a.paused) {
     musicWasPlaying = true;
     try { setSS(MUSIC_STATE.TIME, String(a.currentTime)); } catch (e) {}
     try { a.pause(); } catch (e) {}
+  } else if (started && !muted && !isPageUnloading) {
+    // Already paused (e.g. OS took audio focus for the call) but we were
+    // the ones playing → still want auto-resume on return.
+    musicWasPlaying = true;
+    try {
+      if (isFinite(a.currentTime) && a.currentTime > 0) setSS(MUSIC_STATE.TIME, String(a.currentTime));
+    } catch (e) {}
   }
   updateMusicToggleIcon();
+}
+
+/* A tel: tap opens the dialer (page hides) but is NOT a real unload —
+   remember the playing state NOW so a racing beforeunload/pagehide
+   can't lose it. Registered in capture phase, before any other handler. */
+function markTelNav() {
+  const a = musicAudio();
+  if (!a) return;
+  telNavPending = true;
+  setTimeout(() => { telNavPending = false; }, 2000);
+  if (getSS(MUSIC_STATE.LAST_MUTE) === "1") return;
+  if (!a.paused || musicWasPlaying) {
+    musicWasPlaying = true;
+    try {
+      if (isFinite(a.currentTime) && a.currentTime > 0) setSS(MUSIC_STATE.TIME, String(a.currentTime));
+    } catch (e) {}
+  }
 }
 
 /* Unload: never resume afterwards. Clear the resume state and fully stop
@@ -474,6 +511,13 @@ function pauseAudioForHidden() {
    it also fires when the tab is merely backgrounded, where auto-resume
    on return is exactly what we want.) */
 function handleBeforeUnload() {
+  // Dialer intent (tel:) leaves the page alive — pause non-destructively
+  // so visible/focus can auto-resume with position + src intact.
+  if (telNavPending) {
+    isPageUnloading = false;
+    pauseAudioForHidden();
+    return;
+  }
   isPageUnloading = true;
   delSS(MUSIC_STATE.STARTED);
   delSS(MUSIC_STATE.TIME);
@@ -515,7 +559,13 @@ function initMusic() {
 
   window.addEventListener("beforeunload", handleBeforeUnload);
   window.addEventListener("pagehide", pauseAudioForHidden);
-  window.addEventListener("pageshow", () => { isPageUnloading = false; });
+  window.addEventListener("pageshow", () => { isPageUnloading = false; telNavPending = false; tryAutoResume(); });
+  // Capture tel: taps before the dialer backgrounds the page.
+  document.addEventListener("click", (e) => {
+    try {
+      if (e.target && e.target.closest && e.target.closest('a[href^="tel:"]')) markTelNav();
+    } catch (err) {}
+  }, true);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") pauseAudioForHidden();
     else if (document.visibilityState === "visible") tryAutoResume();
