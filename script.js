@@ -67,8 +67,8 @@ function buildDecoration() {
         d.style.setProperty("--op", (0.3 + Math.random() * 0.5).toFixed(2));
       } else {
         const shapes = conf.kind === "mixed"
-          ? ["🥀", "🌺", "🌼", "🌸", "✨", "❤"]
-          : ["🌸", "🌼", "✨", "🍃"];
+          ? ["🥀", "🌺", "🌼", "🌸", "✨", "❤", "🪔"]
+          : ["🌸", "🌼", "✨", "🍃", "🪔"];
         d.textContent = shapes[i % shapes.length];
         d.style.fontSize = size;
         d.style.left = left + "vw";
@@ -84,18 +84,26 @@ function buildDecoration() {
 }
 
 /* ============================================================
-   2. CLICK RIPPLE on buttons & cards
+   2. CLICK RIPPLE + TAP POP on buttons & cards
    ============================================================ */
 function addRipples() {
-  $$(".btn, .event-card").forEach(el => {
+  $$(".btn, .event-card, .btn-back, .contact-item, .music-toggle").forEach(el => {
     el.addEventListener("click", (e) => {
+      // quick pop so every tap feels alive (touch has no hover)
+      el.classList.remove("is-pressed");
+      void el.offsetWidth;
+      el.classList.add("is-pressed");
+      setTimeout(() => el.classList.remove("is-pressed"), 380);
+      // ripple splash (center it for keyboard/tap with no coordinates)
       const rect = el.getBoundingClientRect();
       const r = document.createElement("span");
       const size = Math.max(rect.width, rect.height);
       r.className = "ripple";
       r.style.width = r.style.height = size + "px";
-      r.style.left = (e.clientX - rect.left - size / 2) + "px";
-      r.style.top  = (e.clientY - rect.top  - size / 2) + "px";
+      const cx = (e.clientX || (rect.left + rect.width / 2)) - rect.left - size / 2;
+      const cy = (e.clientY || (rect.top + rect.height / 2)) - rect.top - size / 2;
+      r.style.left = cx + "px";
+      r.style.top  = cy + "px";
       el.appendChild(r);
       setTimeout(() => r.remove(), 650);
     });
@@ -120,37 +128,77 @@ function initReveal() {
    ------------------------------------------------------------
    • event cards / "মূল পাতা" buttons are <a href="#view-id">.
    • a hashchange shows that view (so the browser back/forward
-     buttons work), with a 0.4 s fade transition.
-   • other in-page anchors (#events, #details-*) are left for the
-     browser to smooth-scroll within the current view.
+     buttons work), with an exit fade + staggered enter glide.
+   • other in-page anchors (#events, #details-*) smooth-glide
+     within the current view + flash the landing spot.
    • the page never reloads → the single <audio> never restarts.
    ============================================================ */
 function initNav() {
+  let navTimer = null;   // pending exit→enter swap (cleared on rapid taps)
+  const prefersReduced = () =>
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // briefly glow the scrolled-to section so the arrival reads as animated
+  function flashTarget(el) {
+    if (!el || prefersReduced()) return;
+    el.classList.remove("scroll-flash");
+    void el.offsetWidth;
+    el.classList.add("scroll-flash");
+    setTimeout(() => el.classList.remove("scroll-flash"), 1450);
+  }
+
   // show a view (no history changes here — that's the caller's job)
+  // Cool transition: current view fades/slides out (.leaving, ~170ms),
+  // then the target view enters with the staggered viewIn animation.
   function switchView(id) {
     const target = document.getElementById(id);
     if (!target) return;
-    // hide the current view, show the target (fade via .active animation)
     const cur = document.querySelector(".view.active");
-    if (cur) cur.classList.remove("active");
-    target.classList.add("active");
-    // mirror the view's theme onto <body> so the fixed chrome (music
-    // toggle, back buttons, royal-red frame) and body bg take its colors
-    document.body.dataset.theme = target.dataset.theme || "home";
-    // keep the tab title meaningful
-    if (id === "home") {
-      document.title = LANDING_TITLE;
-    } else {
-      const sec = $("[data-event]", target);
-      const key = sec && sec.dataset.event;
-      const ev = (W.events || {})[key];
-      document.title = ev ? `${ev.titleBn} — ${W.groom} ও ${W.bride}` : LANDING_TITLE;
+    const applyThemeAndTitle = () => {
+      // mirror the view's theme onto <body> so the fixed chrome (music
+      // toggle, back buttons, royal-red frame) and body bg take its colors
+      document.body.dataset.theme = target.dataset.theme || "home";
+      // keep the tab title meaningful
+      if (id === "home") {
+        document.title = LANDING_TITLE;
+      } else {
+        const sec = $("[data-event]", target);
+        const key = sec && sec.dataset.event;
+        const ev = (W.events || {})[key];
+        document.title = ev ? `${ev.titleBn} — ${W.groom} ও ${W.bride}` : LANDING_TITLE;
+      }
+    };
+    // same view or reduced motion → instant swap, still re-trigger entrance
+    if (!cur || cur === target || prefersReduced()) {
+      if (navTimer) { clearTimeout(navTimer); navTimer = null; }
+      if (cur && cur !== target) cur.classList.remove("active", "leaving");
+      $$(".view.leaving").forEach(v => v.classList.remove("leaving"));
+      target.classList.remove("active");
+      void target.offsetWidth;                 // restart the enter animation
+      target.classList.add("active");
+      applyThemeAndTitle();
+      return;
     }
+    // hide the current view with an exit animation, show the target after
+    if (navTimer) { clearTimeout(navTimer); navTimer = null; }
+    $$(".view.leaving").forEach(v => v.classList.remove("leaving"));
+    cur.classList.add("leaving");
+    navTimer = setTimeout(() => {
+      navTimer = null;
+      cur.classList.remove("active", "leaving");
+      target.classList.remove("active");
+      void target.offsetWidth;                 // restart the enter animation
+      target.classList.add("active");
+      applyThemeAndTitle();
+    }, 170);
+    // theme/title update immediately so the chrome recolors during the exit
+    applyThemeAndTitle();
   }
 
-  // scroll back to the top on view changes — instant, never smooth
+  // scroll back to the top on view changes — smooth glide, never a jump
   function scrollTop() {
-    try { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
+    if (prefersReduced()) { try { window.scrollTo(0, 0); } catch (e) {} return; }
+    try { window.scrollTo({ top: 0, left: 0, behavior: "smooth" }); }
     catch (e) { window.scrollTo(0, 0); }
   }
 
@@ -178,11 +226,16 @@ function initNav() {
     }
     const id = decodeURIComponent(a.getAttribute("href").slice(1));
     if (VIEW_IDS.indexOf(id) === -1) {
-      // in-view anchor (#events, #details-*, …) → scroll within the current
-      // view WITHOUT changing the URL/history, so Back stays well-behaved.
+      // in-view anchor (#events, #details-*, …) → smooth-glide within the
+      // current view WITHOUT changing the URL/history, so Back stays
+      // well-behaved. A glow flash marks the arrival (no abrupt jump).
       e.preventDefault();
       const target = document.getElementById(id);
-      if (target) target.scrollIntoView({ behavior: "instant", block: "start" });
+      if (target) {
+        try { target.scrollIntoView({ behavior: prefersReduced() ? "auto" : "smooth", block: "start" }); }
+        catch (err) { target.scrollIntoView(); }
+        flashTarget(target);
+      }
       return;
     }
     e.preventDefault();
@@ -229,6 +282,7 @@ function initEnvelope() {
   if (!env) return;
   env.addEventListener("click", () => {
     env.classList.add("open");
+    marigoldBurst();   // celebratory marigold + diya shower
     const vw = $(".video-polaroid");
     if (vw) { vw.classList.remove("jump"); void vw.offsetWidth; vw.classList.add("jump"); }
     const v = $(".couple-video");
@@ -244,7 +298,43 @@ function initEnvelope() {
 }
 
 /* ============================================================
-   5b. COUPLE VIDEO  (landing view only)
+   5a. MARIGOLD BURST — celebratory shower on envelope open.
+   Spawns petals/diyas from the envelope seal, flying outward and
+   fading; spans self-remove. Skipped for reduced-motion users.
+   ============================================================ */
+function marigoldBurst() {
+  try {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ov = $(".envelope-overlay");
+    const env = $("#envelope");
+    if (!ov || !env) return;
+    const r = env.getBoundingClientRect();
+    const or = ov.getBoundingClientRect();
+    const cx = r.left - or.left + r.width / 2;
+    const cy = r.top - or.top + r.height * 0.35;
+    const petals = ["🌼", "🌸", "🌺", "🪔", "✨"];
+    for (let i = 0; i < 26; i++) {
+      const s = document.createElement("span");
+      s.className = "burst-petal";
+      s.setAttribute("aria-hidden", "true");
+      s.textContent = petals[i % petals.length];
+      const ang = Math.random() * Math.PI * 2;
+      const dist = 90 + Math.random() * 190;
+      s.style.left = cx + "px";
+      s.style.top = cy + "px";
+      s.style.fontSize = (12 + Math.random() * 16).toFixed(0) + "px";
+      s.style.setProperty("--bx", (Math.cos(ang) * dist).toFixed(0) + "px");
+      s.style.setProperty("--by", (Math.sin(ang) * dist - 120).toFixed(0) + "px");
+      s.style.setProperty("--br", (Math.random() * 360 - 180).toFixed(0) + "deg");
+      s.style.animationDelay = (Math.random() * 0.25).toFixed(2) + "s";
+      ov.appendChild(s);
+      setTimeout(() => s.remove(), 3200);
+    }
+  } catch (e) {}
+}
+
+/* ============================================================
+   5c. COUPLE VIDEO  (landing view only)
    • muted + playsinline are set in markup so Android/iOS play inline.
    • kick playback on load (muted autoplay is allowed everywhere).
    • on ANY load error, swap to the PNG cartoon fallback.
@@ -389,11 +479,16 @@ function musicAudio() {
   return document.getElementById("bgMusic");
 }
 
-/* Show 🔊 only while audibly playing; 🔇 when paused or muted. */
+/* Show the wave icon only while audibly playing; muted-cross otherwise.
+   (Never uses textContent — that would destroy the inline SVG.) */
 function updateMusicToggleIcon() {
   const a = musicAudio();
   const t = $(".music-toggle");
-  if (t && a) t.textContent = (!a.paused && !a.muted) ? "🔊" : "🔇";
+  if (!t || !a) return;
+  const playing = !a.paused && !a.muted;
+  t.classList.toggle("is-playing", playing);
+  t.setAttribute("aria-pressed", playing ? "true" : "false");
+  t.setAttribute("aria-label", playing ? "মিউজিক বন্ধ করুন" : "মিউজিক চালু করুন");
 }
 
 /* show a tiny buffering spinner on the button while the file loads */

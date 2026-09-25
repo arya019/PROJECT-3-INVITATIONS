@@ -7,8 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Great+Vibes&family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700;900&family=Noto+Serif+Devanagari:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="themes.css">
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="themes.css?v=2">
   <link rel="preload" as="audio" type="audio/mpeg" href="images/shehnai.mp3">
   <link rel="preload" as="video" type="video/mp4" href="images/couple-animation.mp4">
 
@@ -36,8 +36,20 @@
          playsinline
          webkit-playsinline></audio>
 
-  <!-- ── music toggle (always visible, top-right) ── -->
-  <button class="music-toggle js-music" aria-label="মিউজিক">🔊</button>
+  <!-- ── music toggle (always visible, top-right) ──
+       Inline SVG speaker (no external file): crisp on mobile, works
+       offline. JS swaps .is-playing to show waves vs muted cross. -->
+  <button class="music-toggle js-music" aria-label="মিউজিক চালু করুন" aria-pressed="false">
+    <svg class="mus-ic mus-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path class="spk" d="M4 9.4v5.2c0 .5.4.9.9.9h3L12.5 19c.4.3 1 .1 1-.4V5.4c0-.5-.6-.7-1-.4L7.9 8.5h-3c-.5 0-.9.4-.9.9z"/>
+      <path class="wave w1" d="M15 9.4a3.6 3.6 0 0 1 0 5.2"/>
+      <path class="wave w2" d="M17.3 7.2a6.8 6.8 0 0 1 0 9.6"/>
+    </svg>
+    <svg class="mus-ic mus-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path class="spk spk-dim" d="M4 9.4v5.2c0 .5.4.9.9.9h3L12.5 19c.4.3 1 .1 1-.4V5.4c0-.5-.6-.7-1-.4L7.9 8.5h-3c-.5 0-.9.4-.9.9z"/>
+      <path class="mute-x" d="M15.5 9.8l4.7 4.7m0-4.7l-4.7 4.7"/>
+    </svg>
+  </button>
 
   <!-- ═══════════════════════ VIEW: LANDING ═══════════════════════ -->
   <section id="home" class="view active" data-theme="home">
@@ -778,7 +790,7 @@
     <button class="lb-nav lb-next" aria-label="পরে">›</button>
   </div>
 
-  <script src="config.js"></script>
-  <script src="script.js"></script>
+  <script src="config.js?v=2"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>
