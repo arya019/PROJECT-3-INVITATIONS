@@ -1002,7 +1002,78 @@ document.addEventListener("DOMContentLoaded", () => {
   initHomeCards();       // fill landing names + event cards from config.js
   initSaveDate();        // fill Save-the-Date card + wire calendar button
   initMeetCouple();      // flip cards: পাত্র ও পাত্রীর পরিচয়
+  initTouchTrail();      // fingertip sparkle trail (touch devices only)
 });
+
+/* ============================================================
+   TOUCH TRAIL — fingertip sparkles for phones/tablets.
+   ------------------------------------------------------------
+   Touch-events ONLY (touchstart/touchmove), so mouse/PC behaviour
+   is completely untouched. Spawns one small emoji particle per
+   ~26px of finger travel (plus a slightly bigger one on tap-down);
+   each particle floats up, fades and removes itself. Passive
+   listeners → scrolling is never blocked. Capped live nodes +
+   skipped entirely for reduced-motion users (battery-friendly).
+   ============================================================ */
+function initTouchTrail() {
+  try {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!("ontouchstart" in window) && !(navigator.maxTouchPoints > 0)) return;
+
+    const GLYPHS = ["✨", "🌸", "❤", "🌼", "🪔"];
+    const MAX_LIVE = 36;    // hard cap on simultaneous particles
+    const MIN_DIST = 26;    // px of finger travel between spawns
+    let gi = 0, live = 0, lastX = null, lastY = null;
+
+    function spawn(x, y, big) {
+      if (live >= MAX_LIVE) return;
+      if (document.visibilityState === "hidden") return;
+      const s = document.createElement("span");
+      s.className = "touch-trail-particle";
+      s.setAttribute("aria-hidden", "true");
+      s.textContent = GLYPHS[gi++ % GLYPHS.length];
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.fontSize = (big ? 20 + Math.random() * 8 : 12 + Math.random() * 10).toFixed(0) + "px";
+      s.style.setProperty("--tx", (Math.random() * 44 - 22).toFixed(0) + "px");
+      s.style.setProperty("--tr", (Math.random() * 90 - 45).toFixed(0) + "deg");
+      s.style.animationDuration = (0.7 + Math.random() * 0.5).toFixed(2) + "s";
+      live++;
+      document.body.appendChild(s);
+      setTimeout(() => { s.remove(); live--; }, 1300);
+    }
+
+    function resetLast(t) { lastX = t.clientX; lastY = t.clientY; }
+
+    document.addEventListener("touchstart", (e) => {
+      try {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          const t = e.changedTouches[i];
+          spawn(t.clientX, t.clientY, true);
+          if (i === 0) resetLast(t);
+        }
+      } catch (err) {}
+    }, { passive: true });
+
+    document.addEventListener("touchmove", (e) => {
+      try {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          const t = e.changedTouches[i];
+          if (lastX === null) { resetLast(t); spawn(t.clientX, t.clientY, false); continue; }
+          const dx = t.clientX - lastX, dy = t.clientY - lastY;
+          if (dx * dx + dy * dy >= MIN_DIST * MIN_DIST) {
+            resetLast(t);
+            spawn(t.clientX, t.clientY, false);
+          }
+        }
+      } catch (err) {}
+    }, { passive: true });
+
+    const clearLast = () => { lastX = lastY = null; };
+    document.addEventListener("touchend", clearLast, { passive: true });
+    document.addEventListener("touchcancel", clearLast, { passive: true });
+  } catch (e) {}
+}
 
 /* ============================================================
    MEET THE COUPLE — flip cards (landing #home only)

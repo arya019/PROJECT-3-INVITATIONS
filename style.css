@@ -68,17 +68,8 @@ body.page-leaving { opacity: 0; }
 img { max-width: 100%; display: block; }
 a { text-decoration: none; color: inherit; }
 
-/* Formal double-border frame shown only on the royal-red theme */
-body[data-theme="royal-red"]::before {
-  content: "";
-  position: fixed;
-  inset: 12px;
-  border: 3px double var(--frame-color);
-  border-radius: 10px;
-  pointer-events: none;
-  z-index: 2;
-  opacity: .55;
-}
+/* Formal double-border frame on the royal-red (Biye) theme — removed per
+   request; other themes never showed it (--frame-color: transparent). */
 
 /* ---------- Typography helpers ---------- */
 .serif { font-family: var(--head-font); }
@@ -449,9 +440,9 @@ body[data-theme="royal-red"]::before {
   line-height: 1;
   opacity: 0.85;
 }
-/*间距: divider#1 → ॥ (18px), poetic2 → divider#2 (24px), divider#2 → button (28px) */
+/* spacing: divider#1 → ॥ (18px), invite → divider#2 (24px) */
 .home-hero .hero-deco:first-child { margin-bottom: 18px; }
-.home-hero .hero-deco:last-of-type { margin-top: 24px; margin-bottom: 28px; }
+.home-hero .hero-deco:last-of-type { margin-top: 24px; margin-bottom: 0; }
 
 /* ── ॥ blessing line ── */
 .home-hero .hero-bless {
@@ -529,10 +520,9 @@ body[data-theme="royal-red"]::before {
 .home-hero > *:nth-child(1) { animation-delay: 0s;   } /* divider#1 */
 .home-hero > *:nth-child(2) { animation-delay: .2s;  } /* ॥ */
 .home-hero > *:nth-child(3) { animation-delay: .4s;  } /* names */
-.home-hero > *:nth-child(4) { animation-delay: .6s;  } /* poetic line 1 */
-.home-hero > *:nth-child(5) { animation-delay: .8s;  } /* poetic line 2 */
+.home-hero > *:nth-child(4) { animation-delay: .6s;  } /* poem */
+.home-hero > *:nth-child(5) { animation-delay: .8s;  } /* invite */
 .home-hero > *:nth-child(6) { animation-delay: 1.0s; } /* divider#2 */
-.home-hero > *:nth-child(7) { animation-delay: 1.2s; } /* button */
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -541,17 +531,11 @@ body[data-theme="royal-red"]::before {
   .home-hero > * { animation: none; opacity: 1; }
 }
 
-/* ── mobile ── */
+/* ── mobile: same hero box as PC (only text sizes adapt) ── */
 @media (max-width: 600px) {
-  .home-hero {
-    width: 92vw;
-    padding: 2.5rem 1rem 2rem;
-    min-height: auto;
-  }
   .home-hero .hero-names { font-size: 2rem; gap: .35rem; }
   .home-hero .hero-poem  { font-size: .95rem; }
   .home-hero .hero-invite { font-size: .95rem; }
-  .home-hero .hero-cta   { padding: 12px 26px; }
   #home #events { padding-top: 2rem; }
 }
 
@@ -2627,4 +2611,38 @@ html, body {
   -webkit-transform: rotateY(180deg);
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/* ===== TOUCH TRAIL (phones/tablets only — mouse/PC untouched) =====
+   script.js spawns .touch-trail-particle spans at the fingertip on
+   touchstart/touchmove. Each floats up and fades, then removes itself.
+   pointer-events:none + position:fixed → never blocks scroll or taps. */
+.touch-trail-particle {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 500;
+  pointer-events: none;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(201, 162, 39, 0.8);
+  will-change: transform, opacity;
+  animation: touchTrailRise 0.9s ease-out forwards;
+}
+@keyframes touchTrailRise {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% - 46px)) scale(1.1) rotate(var(--tr, 40deg));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .touch-trail-particle {
+    display: none !important;
+  }
 }
