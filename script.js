@@ -1001,4 +1001,62 @@ document.addEventListener("DOMContentLoaded", () => {
   initEventPages();      // fill each event view from config.js
   initHomeCards();       // fill landing names + event cards from config.js
   initSaveDate();        // fill Save-the-Date card + wire calendar button
+  initMeetCouple();      // flip cards: পাত্র ও পাত্রীর পরিচয়
 });
+
+/* ============================================================
+   MEET THE COUPLE — flip cards (landing #home only)
+   Front = static HTML in index.html.
+   Back = populated here from COUPLE_PROFILES (config.js).
+   Labels are plain Bengali text, no emojis.
+   ============================================================ */
+function initMeetCouple() {
+  const PROFILES = (typeof window !== "undefined" && window.COUPLE_PROFILES) || (typeof COUPLE_PROFILES !== "undefined" ? COUPLE_PROFILES : null);
+  if (!PROFILES) return;
+  const FALLBACK_PHOTO = "images/couple-cartoon.png";
+
+  document.querySelectorAll('.profile-card').forEach(card => {
+    const key = card.dataset.profile;
+    const data = PROFILES[key];
+    if (!data) return;
+
+    const back = card.querySelector('.profile-back');
+    if (!back) return;
+
+    let infoHTML = '';
+    if (data.fatherBn) infoHTML += `<div class="info-row"><span class="info-label">পিতা</span><span class="info-value">${data.fatherBn}<br><em>${data.fatherEn}</em></span></div>`;
+    if (data.motherBn) infoHTML += `<div class="info-row"><span class="info-label">মাতা</span><span class="info-value">${data.motherBn}<br><em>${data.motherEn}</em></span></div>`;
+    if (data.siblingBn) infoHTML += `<div class="info-row"><span class="info-label">${data.siblingLabelBn}</span><span class="info-value">${data.siblingBn}<br><em>${data.siblingEn}</em></span></div>`;
+    if (data.addressBn) infoHTML += `<div class="info-row"><span class="info-label">ঠিকানা</span><span class="info-value">${data.addressBn}<br><em>${data.addressEn}</em></span></div>`;
+    if (data.mobileBn) infoHTML += `<div class="info-row"><span class="info-label">মোবাইল</span><span class="info-value">${data.mobileBn}<br><em>${data.mobileEn}</em></span></div>`;
+
+    back.innerHTML = `
+      <div class="back-photo-wrap"><img src="${data.photo}" alt="${data.nameBn}" class="back-photo" onerror="this.onerror=null;this.src='${FALLBACK_PHOTO}'"></div>
+      <h3 class="back-name-bn">${data.nameBn}</h3>
+      <p class="back-name-en">${data.nameEn}</p>
+      <div class="back-info">${infoHTML}</div>
+      <button class="profile-back-btn" type="button">← ফিরে যান</button>
+    `;
+  });
+
+  // front-photo fallback (if rounak-1 / kakoli-1 missing)
+  document.querySelectorAll('.front-photo').forEach(img => {
+    img.addEventListener('error', () => {
+      if (!img.src.includes('couple-cartoon.png')) img.src = FALLBACK_PHOTO;
+    });
+  });
+
+  document.querySelectorAll('.profile-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.profile-back-btn')) return;
+      card.classList.toggle('flipped');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.profile-back-btn')) {
+      const card = e.target.closest('.profile-card');
+      if (card) card.classList.remove('flipped');
+    }
+  });
+}

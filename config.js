@@ -171,3 +171,50 @@ const WEDDING = {
 
 /* Expose it globally so script.js can read everything. */
 if (typeof window !== "undefined") window.WEDDING = WEDDING;
+
+/* ============================================================
+   COUPLE PROFILES — "পাত্র ও পাত্রীর পরিচয়" (Meet the Couple)
+   Used by the landing #home meet-couple flip cards.
+   ============================================================ */
+const COUPLE_PROFILES = {
+  groom: {
+    nameBn: "রৌনক প্রামাণিক",
+    nameEn: "Rounak Pramanik",
+    roleBn: "পাত্র",
+    roleEn: "Groom",
+    fatherBn: "শ্রী সুরেন্দ্রনাথ প্রামাণিক",
+    fatherEn: "Sri Surendranath Pramanik",
+    motherBn: "শ্রীমতী সমাপ্তি প্রামাণিক",
+    motherEn: "Smt. Samapti Pramanik",
+    siblingLabelBn: "ভাই",
+    siblingLabelEn: "Brother",
+    siblingBn: "সৈকত প্রামাণিক",
+    siblingEn: "Saikat Pramanik",
+    addressBn: "কয়েম্বা, মারগ্রাম, বীরভূম - ৭৩১২৪১",
+    addressEn: "Koyemba, Margram, Birbhum - 731241",
+    mobileBn: "৯৭৩৩৪ ৩৫০৯৭",
+    mobileEn: "+91 97334 35097",
+    photo: "images/rounak-1.jpg"
+  },
+  bride: {
+    nameBn: "কাকলী দাস",
+    nameEn: "Kakoli Das",
+    roleBn: "কনে",
+    roleEn: "Bride",
+    fatherBn: "শ্রী নারায়ণ চন্দ্র দাস",
+    fatherEn: "Sri Narayan Chandra Das",
+    motherBn: "শ্রীমতী সোনালী দাস",
+    motherEn: "Smt. Sonali Das",
+    siblingLabelBn: "",
+    siblingLabelEn: "",
+    siblingBn: "",
+    siblingEn: "",
+    addressBn: "নারায়ণপুর, রামপুরহাট, বীরভূম - ৭৩১২২৩",
+    addressEn: "Narayanpur, Rampurhat, Birbhum - 731223",
+    mobileBn: "",
+    mobileEn: "",
+    photo: "images/kakoli-1.jpg"
+  }
+};
+
+if (typeof window !== "undefined") window.COUPLE_PROFILES = COUPLE_PROFILES;
