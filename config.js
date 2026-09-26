@@ -28,8 +28,8 @@ const WEDDING = {
   },
 
   /* ══ 3. BACKGROUND MUSIC ══════════════════════════════════ */
-  /* Path to the looping shehnai tune. */
-  musicSrc: "images/shehnai.mp3",
+  /* Path to the looping satpake-badha tune. */
+  musicSrc: "images/satpake-badha.mp3",
 
   /* ═══════════════════════════════════════════════════════════
      THE FOUR EVENTS

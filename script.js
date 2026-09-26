@@ -457,7 +457,7 @@ function tryAutoResume() {
   // beforeunload (real unload) releases src — restore it so a return
   // from the dialer (tel:) can still resume without a manual toggle.
   if (!a.currentSrc) {
-    try { a.src = (W && W.musicSrc) || "images/shehnai.mp3"; } catch (e) {}
+    try { a.src = (W && W.musicSrc) || "images/satpake-badha.mp3"; } catch (e) {}
     try { a.load(); } catch (e) {}
   }
   const t = parseFloat(getSS(MUSIC_STATE.TIME) || "0");
@@ -507,7 +507,7 @@ function toggleMusic() {
   if (a.paused) {
     // restore the source if an unload handler released it
     if (!a.currentSrc) {
-      try { a.src = (W && W.musicSrc) || "images/shehnai.mp3"; } catch (e) {}
+      try { a.src = (W && W.musicSrc) || "images/satpake-badha.mp3"; } catch (e) {}
       try { a.load(); } catch (e) {}
     }
     const t = parseFloat(getSS(MUSIC_STATE.TIME) || "0");
